@@ -357,7 +357,7 @@ window.language = [["English","en"],
 			f.id = "footer";
 			f.style.width = "400px";
 			doc.body.appendChild(f);
-			$("#footer").html("<p class='footNote' style='padding-bottom: 2em;'> &#169; <a href='http://www.mcgill.ca/mcb/'>McGill MCB</a> & <a href='http://www.alfredkam.com'>Alfred Kam</a><br><span style='font-size:0.6em'><a href='http://crowdsource.cs.mcgill.ca/plugin/'>Want to contribute? Click Here</a></span><br><span style='font-size:0.6em'><a href='http://phylo.cs.mcgill.ca'>Go back to non-mobile edition</a></span></p>");
+			$("#footer").html("<p class='footNote' style='padding-bottom: 2em;'> &#169; <a href='http://www.mcgill.ca/mcb/'>McGill MCB</a> & <a href='http://www.alfredkam.com'>Alfred Kam</a><br><span style='font-size:0.6em'><a href='https://github.com/McGill-CSB/PHYLO'>Want to contribute? Click Here</a></span><br><span style='font-size:0.6em'></span></p>");
 
 			if(window.location.pathname.search(/mini/) > -1)
 				$("#miniNote").hide();
