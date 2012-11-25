@@ -55,7 +55,7 @@
 							}
 						}
 						$.phylo.get = {};
-						$.phylo.get.sequence = j.sequence;
+						$.phylo.get.RNAsequence = j.sequence;
 				    	$.phylo.get.structure = j.structure;
 				    	$.phylo.get.name = j.name;
 						if(DEBUG) {
@@ -151,7 +151,7 @@
 					j.sequence[i] = (j.sequence[i].replace(/-/g,"_")).toUpperCase();
 				}	
 				$.phylo.get = {};
-				$.phylo.get.sequence = j.sequence;
+				$.phylo.get.RNAsequence = j.sequence;
 				
 				if(DEBUG) {
 					j.sequence;
@@ -189,7 +189,7 @@
 					j.structure[i] = j.structure[i].replace(/-/g,"_");
 				}	
 				$.phylo.get = {};
-				$.phylo.get.sequence = j.sequence;
+				$.phylo.get.RNAsequence = j.sequence;
 				$.phylo.get.structure = j.structure;
 				if(j.sequence.length != j.structure.length){
 					alert("# mismatch");

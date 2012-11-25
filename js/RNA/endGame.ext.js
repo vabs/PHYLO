@@ -19,7 +19,7 @@
 				}
 			$.multiSelect.deactive();
 			$.protocal.sendEndGameScore("completed", function(data) {
-				self.events();
+				self.eventsRNA();
 				self.score("completed",data.best_score);
 				//var msg = "<b>Congratulations!</b> You have solved the puzzle";
 				var msg = window.lang.body.play.gameselect["end of game"]["field 3"];

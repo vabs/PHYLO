@@ -55,7 +55,7 @@
 					console.log($.phylo);
 				//$.phylo.tree = $.tree.build($.phylo.get.tree);
 				$.board.build();
-				$.sequence.build($.phylo.get.sequence, $.phylo.get.structure);
+				$.sequence.buildRNA($.phylo.get.RNAsequence, $.phylo.get.structure);
 				//alert("work2");
 				$.sequence.prepareTracking($.phylo.get.sequenceRNA);
 
@@ -90,15 +90,13 @@
 					console.log($.sequence.track);
 					//console.log($.phylo.tree);
 				}
-				//alert($.phylo.tree[$.phylo.tree.length-1].lv);
-				$.stage.last = ($.phylo.get.sequence.length-2);//$.phylo.tree[$.phylo.tree.length-1].lv;
-				//alert($.stage.last);
+				$.stage.last = ($.phylo.get.RNAsequence.length-2);
 				$.customize.default();
 
 				if(window.DEV.disableSplash) {
 					$("#countDown").hide();
 					$.stage.end = false;
-					$.stage.round();	
+					$.stage.roundRNA();	
 					if(DEBUG)
 						$.helper.dump($.sequence.track);
 					if(mouseMove) {
@@ -109,7 +107,7 @@
 					$.splash.countDown(function() {
 						//start game
 						$.stage.end = false;
-						$.stage.round();	
+						$.stage.roundRNA();	
 						if(DEBUG)
 							$.helper.dump($.sequence.track);
 						if(mouseMove) {

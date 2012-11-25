@@ -15,7 +15,7 @@
 						st2+="";
 						st+="";
 					} else {
-						st2+=self.convertColor($("#"+track[i][j]).css("border-color")).charAt(0);
+						st2+=self.convertColorRNA($("#"+track[i][j]).css("border-color")).charAt(0);
 						st+=self.convertColorRNA($("#"+track[i][j]).css("border-color")).charAt(1);
 					}
 				}
