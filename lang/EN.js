@@ -59,6 +59,12 @@
 					"field 2": "Random",
 					"field 3": "Easy - Hard",
 },
+                    "custom": {
+    					"field 1": "Custom",
+    					"field 2": "Choose your input RNA sequence",
+    					"field 3": "Choose your predicted RNA structure",
+    					"field 4": "Submit",
+},
 				"level id": {
 					"field 1": "Enter the ID of the level you wish to play",
 					"field 2": "Level ID",

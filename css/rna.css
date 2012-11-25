@@ -5,3 +5,77 @@
 .openBracket, .closeBracket {
 	background-color: #71B2E2;
 }	
+#store_sequence, #store_structure,#store_name {
+	display:none;
+}
+#custom_inputfile1 {
+	display:none;
+	position:relative;
+	top: -400px;
+	left: 570px;
+	z-index:2;
+
+}
+.sequence, .ancestor {
+	height:0px;
+	width:0px;
+	position:absolute;
+	display:inline-block;
+	background-color: transparent;
+	border-style: solid;
+	z-index: 11;
+    margin-top: 2px;
+    margin-left: 1px;
+}
+.str-A {
+	border-width: 14.5px 29px 14.5px 0;
+	border-color: #039948 #039948 #039948 #039948;
+}
+.str-G {
+	border-width: 14.5px 29px 14.5px 0;
+	border-color: #71b2e2 #71b2e2 #71b2e2 #71b2e2;
+}		
+.str-C {
+	border-width: 14.5px 29px 14.5px 0;
+	border-color: #84449a #84449a #84449a #84449a;
+}
+.str-U {
+	border-width: 14.5px 29px 14.5px 0;
+	border-color: #f17b22 #f17b22 #f17b22 #f17b22;
+}
+.str-ARight {
+	border-width: 14.5px 0 14.5px 29px;
+	border-color: transparent transparent transparent #039948;
+}
+.str-GRight {
+	border-width: 14.5px 0 14.5px 29px;
+	border-color: transparent transparent transparent #71b2e2;
+}
+.str-CRight {
+	border-width: 14.5px 0 14.5px 29px; 
+	border-color: transparent transparent transparent #84449a;
+}
+.str-URight {
+	border-width: 14.5px 0 14.5px 29px; 
+	border-color: transparent transparent transparent #f17b22;
+}
+.str-ALeft {
+	border-width: 14.5px 29px 14.5px 0; 
+	border-color: transparent #039948 transparent transparent;
+}
+.str-GLeft {
+	border-width: 14.5px 29px 14.5px 0; 
+	border-color: transparent #71b2e2 transparent transparent;
+}
+.str-CLeft {
+	border-width: 14.5px 29px 14.5px 0; 
+	border-color: transparent #84449a transparent transparent;
+}
+.str-ULeft {
+	border-width: 14.5px 29px 14.5px 0; 
+	border-color: transparent #f17b22 transparent transparent;
+}
+#endGame-new, #endGame-replay, #endGame-share, #endGame-download {
+	margin-top:20px;
+	display:inline-block;
+}	
