@@ -1,27 +1,18 @@
 (function(){
-	$.fitchRNA = {
-		//calls to get the score
-		score : function() {
-
+	$.fitch.scoreRNA = function() {
 			if($.main.type != "DNA")
 
-			if($.stage.stats == undefined)
-				$.stage.stats = {};
-			$.stage.stats.match = 0
-			$.stage.stats.mismatch = 0;
-			$.stage.stats.open = 0; 
-			$.stage.stats.extend = 0;
-			$.stage.stats.sMatch =0;
-
+			if($.stage.statsRNA == undefined)
+			$.stage.statsRNA = {};
+			$.stage.statsRNA.match = 0
+			$.stage.statsRNA.mismatch = 0;
+			$.stage.statsRNA.open = 0; 
+			$.stage.statsRNA.extend = 0;
+			$.stage.statsRNA.sMatch =0;
 			var score = $.fitch.scoreGet($.stage.current);
 			return score;
 		},
-		//gets the sequence length
-		getLen : function() {
-			return $.phylo.seqLen;
-		},
-		scoreGet : function(stage) {
-
+	$.fitch.scoreGet = function(stage) {
 			function tabulate(a) {
 				var weight = {
 					match : 1,
@@ -114,71 +105,34 @@
 						}
 					}
 				}
-/*
-				for(var i=0;i<arr.length;i++) {
-					if (arr[i] == "x") {
-						if (seq[i] != "x") {
-							if (i != 0 && arr[i-1] == "x" && seq[i-1] == "x") {
-								log.extend++;
-							}
-							else {
-								log.open++;
-							}
-						}
-							
-					}
-					else if (seq[i] == "x") {
-						if (i != 0 && (seq[i-1] == "x" && arr[i-1] != "x")) {
-							log.extend++;
-						}
-						else {
-							log.open++;
-						}
-					}
-					else if (seq[i] == arr[i] || seq[i] == arr[i]) {
-						log.match++;
-					}
-					else {
-						log.mismatch++;
-					}
-				}
-*/
 				return log;
 			};
 			var score = 0;
-			//alert($.stage.current);
 			if ($.stage.current == 0){
 				var a = $.sequence.nucArray($.sequence.track[0]);
 				var b = $.sequence.nucArray($.sequence.track[1]);
-				alert(a);
-				alert(b);
 				var log = trace(a,b);
 				score+=tabulate(log);
-				$.stage.stats.match += parseInt(log.match);
-				$.stage.stats.mismatch += parseInt(log.mismatch);
-				$.stage.stats.open += parseInt(log.open);
-				$.stage.stats.extend += parseInt(log.extend);
+				$.stage.statsRNA.match += parseInt(log.match);
+				$.stage.statsRNA.mismatch += parseInt(log.mismatch);
+				$.stage.statsRNA.open += parseInt(log.open);
+				$.stage.statsRNA.sMatch += parseInt(log.sMatch);
+				$.stage.statsRNA.extend += parseInt(log.extend);
 			} else {
 			for (var it=0;it<=$.stage.current;it++){
-				//alert(it);
-				//alert($.stage.current);
-				//alert($.sequence.nucArray($.sequence.track[it]));
 				var a = $.sequence.nucArray($.sequence.track[it]);
-				//alert(a);
 				for (var lt=it+1;lt<=$.stage.current+1;lt++){
 					var b = $.sequence.nucArray($.sequence.track[lt]);
-					alert(lt);
-					alert(b);
 					var log = trace(a,b)
 					score+=tabulate(log);
-					$.stage.stats.match += parseInt(log.match);
-					$.stage.stats.mismatch += parseInt(log.mismatch);
-					$.stage.stats.open += parseInt(log.open);
-					$.stage.stats.extend += parseInt(log.extend);
+					$.stage.statsRNA.match += parseInt(log.match);
+					$.stage.statsRNA.sMatch += parseInt(log.sMatch);
+					$.stage.statsRNA.mismatch += parseInt(log.mismatch);
+					$.stage.statsRNA.open += parseInt(log.open);
+					$.stage.statsRNA.extend += parseInt(log.extend);
 					}
 				}
 			}
-
 			return score;
 		},
 		

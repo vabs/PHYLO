@@ -7,7 +7,7 @@
 			} else if(this.current === this.last) {
 				this.end = true;
 				$.timer.stop();
-				$.endGame.complete();
+				$.endGame.completeRNA();
 				return "end game";
 			} 
 	},
@@ -16,7 +16,6 @@
 				$.timer.start();
 			$.engine.deActive();
 			$(".boardRow").removeClass("current").removeClass("blocked");
-
 			var addClass = function(n) {
 				var g = n+1;
 				for(var i=g;i>=0;i--) {
@@ -24,7 +23,6 @@
 				}
 			}
 			this.splash(x);
-			//show(x);
 			addClass(x);
 			if(x == 0) {
 				$("#bg").show("slide",{direction : "left"},400);
@@ -34,9 +32,7 @@
 					$(this).addClass("blocked");
 				}
 			});
-			//var x = $.phylo.tree[x];
 			$.engine.active();
-			//$.tree.buildAncestor();
 			var tmp = [];
 			$.phylo.bestTrack = [];
 			for(var i=0;i<8;i++) {

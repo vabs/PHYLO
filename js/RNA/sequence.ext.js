@@ -4,10 +4,6 @@
 			this.posList = [];
 			this.posListReverse = [];
 			this.nucleotide = [];
-			//this.strList = [];
-			//this.strListReverse = [];
-			//this.struct = [];
-			
 			for(var i=0, y=10, x = $.phylo.seqLen;i<y*x;i++) {
 				this.posList.push(0);
 				this.posListReverse.push(0);

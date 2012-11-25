@@ -9,16 +9,13 @@
 				d.className = 'btn btn-primary';
 				d.id = 'dlButton';
 				document.getElementById('endGame-download').appendChild(d);
-				//}
 				var a = document.createElement('a');
 				a.id = 'Download-solution';
 				a.className = 'Download-solution';
 				a.style.color = "white";
-				//a.style.text-decoration = "none";
 				a.download = "solution.fa";
 				a.innerHTML = 'Download';
 				document.getElementById('dlButton').appendChild(a);
-				//$('#Download-solution').attr('style','color:"white"')
 				}
 			$.multiSelect.deactive();
 			$.protocal.sendEndGameScore("completed", function(data) {
@@ -64,9 +61,10 @@
 				$("#countDown-text").html("<img src='img/loading.gif'/>");
 				$("#countDown").fadeIn();
 			});
+			
 			$("#endGame-download button").unbind().click(function(){
 			    var a = document.getElementById('Download-solution');
-				var data = $.board.getJsonAlignments();
+				var data = $.board.getJsonAlignmentsRNA();
 				var name = $.phylo.get.name;
 				var counter = 0;
 				for (var i=0;i<data.length;i++){

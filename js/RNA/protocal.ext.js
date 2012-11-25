@@ -1,6 +1,6 @@
 (function() {
 	$.protocal.requestRNA = function(setting) {
-	var str ="";
+			var str ="";
 			var type = this.tp;
 			var score = this.score;
 			if (type == "custom"){
@@ -20,12 +20,59 @@
 			    if (!hseq.files[0]) {
 			    	alert("file input is not found");
 			    }
+				
+				function send(){
+			    	alert("entered");
+					    var sequenceData = document.getElementById('store_sequence').innerHTML;
+					    var streData = document.getElementById('store_structure').innerHTML;
+					    var nameData = document.getElementById('store_name').innerHTML;
+					    var structureData = streData.replace("/\n/g","");
+					    var dummy2 = '{"level":{"attributes":{"id":"1462"},"sequence":['+ sequenceData + '],"structure":[' + structureData + '],"name":['+nameData+']}}';
+					   // var dummy = '{"level":{"attributes":{"id":"1462"},"sequence":["UGGCUAGU","UGGCUGGUGA"],"structure":[".((..)).","...((..))."],"tree":"(((hg19,rheMac2),mm9),(bosTau4,canFam2));"}}';
+						$.protocal.previousData = dummy2;
+						try {
+							var j = eval("["+dummy2+"]")[0].level;
+						} catch(err) {
+							if(DEBUG)
+								alert(err);
+								console.log(err);
+							return;
+						}
+						$.phylo.id = j.attributes.id;
+						for(var i =0;i<j.sequence.length;i++) {
+							j.sequence[i] = (j.sequence[i].replace(/-/g,"_")).toUpperCase();
+						}	
+						for(var i =0;i<j.structure.length;i++) {
+							j.structure[i] = j.structure[i].replace(/-/g,"_");
+						}	
+						for(var i =0;i<j.name.length;i++) {
+							j.name[i] = j.name[i].replace('&gt;',">");
+						}	
+						for(var i = 0; i < j.sequence.length;i++) {
+							if (j.sequence[i].length != j.structure[i].length){
+								alert("Incorrect file format");
+								return;
+							}
+						}
+						$.phylo.get = {};
+						$.phylo.get.sequence = j.sequence;
+				    	$.phylo.get.structure = j.structure;
+				    	$.phylo.get.name = j.name;
+						if(DEBUG) {
+							j.sequence;
+						}
+						check = 0;
+						document.getElementById('store_structure').innerHTML = "readyStr";
+						document.getElementById('store_sequence').innerHTML = "readySeq";
+						document.getElementById('store_name').innerHTML = "readyName";
+						$.rna.callBack();
+			    }
+				
 			    function handleFileSelect2(evt) {
 			        var file = evt.files[0]; 
 			        var countline = 0;
 			        	var reader = new FileReader();
 			          	reader.onloadend = function rSeq(e) {
-			          	//alert("load complete");
 			          		var f2 = e.target.result.split("\r\n");
 			          		if (f2[0].charAt(0) != ">"){
 			          			alert("Incorrect file format")
@@ -64,64 +111,9 @@
 					}
 			          reader.readAsText(file);
 			       }
-			    handleFileSelect2(hseq);
-
-			    function send(){
-			    	alert("entered");
-					    var sequenceData = document.getElementById('store_sequence').innerHTML;
-					    var streData = document.getElementById('store_structure').innerHTML;
-					    var nameData = document.getElementById('store_name').innerHTML;
-					    var structureData = streData.replace("/\n/g","");
-					    alert(sequenceData);
-					    alert(structureData);
-					    alert(nameData);
-					    var dummy2 = '{"level":{"attributes":{"id":"1462"},"sequence":['+ sequenceData + '],"structure":[' + structureData + '],"name":['+nameData+']}}';
-					   // var dummy = '{"level":{"attributes":{"id":"1462"},"sequence":["UGGCUAGU","UGGCUGGUGA"],"structure":[".((..)).","...((..))."],"tree":"(((hg19,rheMac2),mm9),(bosTau4,canFam2));"}}';
-						$.protocal.previousData = dummy2;
-					//	alert(dummy2);
-					//	alert(dummy);
-						try {
-							var j = eval("["+dummy2+"]")[0].level;
-						} catch(err) {
-							if(DEBUG)
-								alert(err);
-								console.log(err);
-							return;
-						}
-						$.phylo.id = j.attributes.id;
-						for(var i =0;i<j.sequence.length;i++) {
-							j.sequence[i] = (j.sequence[i].replace(/-/g,"_")).toUpperCase();
-						}	
-						for(var i =0;i<j.structure.length;i++) {
-							j.structure[i] = j.structure[i].replace(/-/g,"_");
-						}	
-						for(var i =0;i<j.name.length;i++) {
-							j.name[i] = j.name[i].replace('&gt;',">");
-						}	
-						for(var i = 0; i < j.sequence.length;i++) {
-							if (j.sequence[i].length != j.structure[i].length){
-								alert("Incorrect file format");
-								return;
-							}
-						}
-						$.phylo.get = {};
-						$.phylo.get.sequence = j.sequence;
-				    	$.phylo.get.structure = j.structure;
-				    	$.phylo.get.name = j.name;
-						if(DEBUG) {
-							j.sequence;
-							//j.tree;
-						}
-					//	$.phylo.get.treeString = j.tree;
-					//	var tree = $.newick.parse(j.tree); 
-					//	$.phylo.get.tree = tree;
-						check = 0;
-						document.getElementById('store_structure').innerHTML = "readyStr";
-						document.getElementById('store_sequence').innerHTML = "readySeq";
-						document.getElementById('store_name').innerHTML = "readyName";
-						$.rna.callBack();
-			    }
-			    return;
+				   
+			    handleFileSelect2(hseq);		 //calls function to handle input file
+			    return;							//function halts until read is done
 			   }
 			if(type == "random") {
 				str+= "mode=1&diff="+score;
@@ -163,11 +155,7 @@
 				
 				if(DEBUG) {
 					j.sequence;
-					//j.tree;
 				}
-				//$.phylo.get.treeString = j.tree;
-				//var tree = $.newick.parse(j.tree); 
-				//$.phylo.get.tree = tree;
 				$.main.callBack();
 
 			}).fail(function() {
@@ -211,16 +199,10 @@
 						alert("length mismatch");
 					}
 				}
-				//alert(j.structure);
 				if(DEBUG) {
 					j.sequence;
-					//j.tree;
 				}
-				//$.phylo.get.treeString = j.tree;
 				$.phylo.get.name = [">1",">2",">3",">4",">5",">6",">7",">8",">9",">10"];
-				//alert($.phylo.get.name);
-				//var tree = $.newick.parse(j.tree); 
-				//$.phylo.get.tree = tree;
 				$.rna.callBack();
 			});
 		},

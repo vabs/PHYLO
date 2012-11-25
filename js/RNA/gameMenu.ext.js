@@ -121,83 +121,6 @@
 		
 			sandbox.appendChild(canvas);
 		};
-		//depreciated
-		/* but its a cool way to start a game */
-		/*
-		g.prototype.loadStroke = function(doc,win,settings) {
-			var ctx = doc.getElementById('draw').getContext('2d');
-			var selection = [];
-
-			var f = this;
-			var stroke = function(ctx) {
-				ctx.beginPath();
-				ctx.fillStyle = "#E80000";
-				ctx.fillRect(0,313,1024,25);
-				ctx.fillStyle = "rgb(113, 178, 226)";
-				var x = 170;
-				var y = 300;
-				ctx.fillRect(170,300,200,50);
-				ctx.font = "20pt Helvetica";
-				ctx.fillStyle = "white";
-				ctx.fillText("Slide To Play",190,335);
-				ctx.closePath();
-				var offset = 0;
-				this.onOver = function(eX,eY) {
-					
-				};
-				this.offset = 0;
-				this.onMouseDown = function(eX,eY) {
-					if( x <= eX && eX <= x+200 &&
-						y <= eY && eY <= y+50) {
-						if(offset == 0 ) 
-							offset = eX-x;
-						if(eX-offset > 0 && 824 > eX-offset) {
-							ctx.beginPath();
-							ctx.fillStyle = "#E80000";
-							ctx.clearRect(x,300,200,50);
-							ctx.fillRect(x,313,200,25);
-							ctx.fillStyle = "rgb(113, 178, 226)";
-							ctx.fillRect(eX-offset,300,200,50);
-							ctx.font = "20pt Helvetica";
-							ctx.fillStyle = "white";
-							ctx.fillText("Slide To Play",eX-offset+20,335);
-							x = eX-offset;
-							if( x > 500) {
-								//start menu
-								$('#draw').unbind("mouseup");
-								$('#draw').unbind("mousedown");
-								$('#draw').unbind("mousemove");
-								f.loadMenu(doc,win,settings);
-							}
-						}
-						ctx.closePath();
-					} else {
-
-					}
-				};
-				this.onUnbind = function() {
-					offset = 0;
-				}
-			};
-			f.loadMenu(doc,win,settings);
-			
-			selection.push(new stroke(ctx));
-
-			$('#draw').mousedown(function(e) {
-				$('#draw').mousemove(function(e) {
-					var k = getCursorPosition(e);
-					for(var i=0;i<selection.length;i++) {
-						selection[i].onMouseDown(k[0],k[1]);		
-					}
-				});
-			});
-			$('#draw').mouseup(function(e){
-				$('#draw').unbind("mousemove");
-				for(var i=0;i<selection.length;i++) {
-					selection[i].onUnbind();		
-				}
-			});
-		}; */
 
 		g.prototype.loadMenu = function(doc,win,settings) {
 			var f = this;
@@ -246,7 +169,6 @@
 				icon.src = menuIcon[i][0];
 				ctx.fillStyle = menuStrColor;
 				ctx.font = "19pt Helvetica";
-				//ctx.fillText(menuStr[i],x+100,y+25);
 				ctx.closePath();
 				var iconOnHover = false;
 				this.onOver =  function(eX,eY) {
@@ -378,14 +300,10 @@
 			} 
 
 			var custom = function(ctx) {
-				//$("#form1").show();
 				$("#custom_inputfile1").show();
-				//$("#custom_inputfile2").show();
 				ctx.beginPath();
 				ctx.save();
 				ctx.fillStyle = "rgb(153,50,204)";
-				//ctx.fillRect(720,30,90,30);
-				//ctx.fillRect(720,230,90,30);
 				ctx.fillRect(710, 372, 120,40)
 				ctx.fillStyle = "white";
 				ctx.font = '19pt Helvetica';
@@ -404,22 +322,18 @@
 						*/
 						$("#menu").hide();
 						$("#custom_inputfile1").hide();
-						//document.getElementById('form1').submit();
 						$.rna.init({
 							type: "custom",
 							num: i,		
 						});	
 						return;
-						//document.getElementById('form1').submit();
 					}
 				};
 				this.onOver = function(eX, eY) {
 					if (700 < eX && eX < 830 && 370 < eY && eY < 420){
-						//ctx.fillStyle = "white";
 						ctx.fillStyle = "#6D6D6D";
 						ctx.fillRect(710, 372, 120, 40);
 						ctx.fillStyle = "white";
-						//ctx.fillStyle = "rgb(153,50,204)";
 						ctx.font = '19pt Helvetica';
 						ctx.textAlign = "center";
 						ctx.fillText(lang.body.play.gameselect.levelselect.custom["field 4"],770, 400);
