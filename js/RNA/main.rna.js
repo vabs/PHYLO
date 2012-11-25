@@ -1,49 +1,47 @@
 (function() {
 	$(document).ready(function() {
 		$.rna = {
-			getPuzzle : function() {
-				var puzzle = [
-					"((((...))))",
-					"((..))",
-					"(((((.........)))))",
-					"(((.....)))"
-				];
-				return puzzle;	
-			},
-			//unbinds all the previous data
 			clear : function() {
+				$.timer.stop();
 				$.stage.current = -1;
+			//	$("#countDown-text").html(3);
+				$("#countDown-text").html('<img src="img/loading.gif>');
+				$("#countDown").show();
+				$("#endGame").hide();
+				/*
+				$("#tree").html();
+				var canvas  = document.getElementById("score");
+				var c = canvas.getContext("2d");
+				c.clearRect(0,0,$.html5.score.settings.wBox, $.html5.score.settings.hBox);
+				*/
 			},
 			//configuration
-			init : function() {
+			init : function(setting) {
 				$.main.type = "RNA";
-				var self = this;
 				this.clear();
 				if($("#tree").css("height") == undefined) {
 					height = 178;
 				} else {
 					height = $("#tree").css("height").replace(/px/,"");
 				}
+				$.endGameRNA.runAway();
 				$.phylo = {
 					seqLen : 25,
 					x : 34,
 					offSet : 0,//$("#gameBoard").css("left").replace(/px/,""),
-					height : height,
+					height : height,//$("#tree").css("height").replace(/px/,""),
 					rows : 10,
 				};
 				$.lang.init(function() {
 					$("#game").show();
-					//$.protocal.read(setting);
-					//$.protocal.request();
+					$.protocal.read(setting);
+					$.protocal.requestRNA();
 					//$.endGame.init("lose");
-					self.callBack();
 				});
 			},
 			//call back on protocal complete
 			//sets the layout and activates the game
 			callBack : function() {
-				var self = this;
-				
 				//sets the gameBoard to be nonMovable on touch devices.
 				$.events.touch("#gameBoard",{
 					start: function(e) {
@@ -53,11 +51,13 @@
 				});
 				var mouseMove = "onmousemove" in document.documentElement;
 
+				if(DEBUG)
+					console.log($.phylo);
 				//$.phylo.tree = $.tree.build($.phylo.get.tree);
 				$.board.build();
-				//using temporary puzzle
-				$.sequence.buildRNA(self.getPuzzle());
-				$.sequence.prepareRNATracking(self.getPuzzle());
+				$.sequence.build($.phylo.get.sequence, $.phylo.get.structure);
+				//alert("work2");
+				$.sequence.prepareTracking($.phylo.get.sequenceRNA);
 
 				$.phylo.origin = [];
 				for(var i=0;i<8;i++){
@@ -69,34 +69,59 @@
 				}
 
 				$.helper.copy($.phylo.origin, $.sequence.track);
-			//	var random = $.sequence.randomize($.sequence.track);
-			//	$.sequence.prepareTracking(random);
+				//$.phylo.origin = $.sequence.track.slice(0);
+				if(DEBUG) {
+					console.log("Before Random");
+					console.log($.sequence.track);
+				}
+				var random = $.sequence.randomize($.sequence.track);
+				$.sequence.prepareTracking(random);
+				if(DEBUG) {
+					console.log("Randomized Sequence");
+					console.log(random);
+				}
 				$.phylo.domCache = $.sequence.createCache();
-			//	$.physics.snapRandom();
+				$.physics.snapRandom();
 
-			//	$.stage.last = $.phylo.tree[$.phylo.tree.length-1].lv;
-			//	$.stage.last = 
-				//disbales count down for now	
-		//		$.splash.countDown(function() {
-					//start game
+				if(DEBUG) {
+					console.log("original")
+					console.log($.phylo.origin);
+					console.log("tracked");
+					console.log($.sequence.track);
+					//console.log($.phylo.tree);
+				}
+				//alert($.phylo.tree[$.phylo.tree.length-1].lv);
+				$.stage.last = ($.phylo.get.sequence.length-2);//$.phylo.tree[$.phylo.tree.length-1].lv;
+				//alert($.stage.last);
+				$.customize.default();
+
+				if(window.DEV.disableSplash) {
+					$("#countDown").hide();
 					$.stage.end = false;
-				//temporary values
-					$.stage.rna.last = 10;
-					$.stage.rna.current = 1;
-					
-					$.stage.rna.round();
-					//$.stage.round();	
+					$.stage.round();	
 					if(DEBUG)
 						$.helper.dump($.sequence.track);
 					if(mouseMove) {
 						$.multiSelect.active();
 					}
-		//		});
+				} else {
+					$("#countDown").show();
+					$.splash.countDown(function() {
+						//start game
+						$.stage.end = false;
+						$.stage.round();	
+						if(DEBUG)
+							$.helper.dump($.sequence.track);
+						if(mouseMove) {
+							$.multiSelect.active();
+						}
+					});
+				}
+				$.sequence.checkEachRowLength();
 				$.board.startListener();
-				//temporary sripts to disble certain functions
-				$("#countDown").hide();
-				$(".boardRow").removeClass("hidden");
 			},
 		};
+
+	//	$.main.init();
 	});
 })();
