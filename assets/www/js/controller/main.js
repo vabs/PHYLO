@@ -124,7 +124,7 @@
 	require(['yepnope'],
 		function() {
 			//loads tablet UX
-			window.isTablet = navigator.userAgent.match(/(iPad|Android .* Chrome\/[.0-9]* (?!Mobile)|Opera Tablet|Android .* (?!Mobile)|Tablet|silk|kindle fire)/i) != null;
+			var isTable = true;
 			yepnope({
 				test : isTablet,
 				yep : ['css/tablet.css','js/views/tablet.js'],
@@ -135,9 +135,6 @@
 				test : window.DEV.enableTabletMode,
 				yep : 'css/tablet.css',
 			});
-			var isMobile = navigator.userAgent.match(/(iPhone|Android .* Mobile)/i) != null;
-			if(isMobile) 
-				window.location = "http://phylo.cs.mcgill.ca/archive/js/F2011";
 		}
 	);
 
