@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+        <title>Phylo | DNA Puzzles</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- icons from Font Awesome - http://fortawesome.github.com/Font-Awesome -->
+    <link rel='stylesheet' href='css/font-awesome.css'/>
+    <link rel='stylesheet' href='css/font-awesome-ie7.css'/>
+
+        
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="http://phylo.cs.mcgill.ca">Phylo | DNA Puzzles</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <!--
+            <form class="navbar-form pull-right">
+              <input class="span2" type="text" placeholder="Email">
+              <input class="span2" type="password" placeholder="Password">
+              <button type="submit" class="btn">Sign in</button>
+            </form>
+            -->
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+        <h1>Help us to translate Phylo!</h1>
+        <p>
+        Conserving the language diversity is important.
+        We wish to distribute <a href="http://phylo.cs.mcgill.ca">Phylo</a> in as many languages as possible.
+        To reach this goal, we need your help! This page contains all the material and instructions you need to
+        contribute to the Phylo project and help us to make a version of the game in your favorite language.
+        </p>
+        
+        <p>
+        <b>Step 1:</b> For conveniencies, the text to be transalated is split in two files. The first one (Main text)
+        contains the text used in the game and satellite pages. The second one (Tutorial text) contains the text
+        used in the tutorial. We provided these two files in 3 format: Rich Text Format (.rtf), Microsoft Word Document (.docx)
+        and OpenDocument (.odt). You can use the format of your choice. 
+        
+        Download the following file in your favorite format:
+        <table>
+            <tr>
+                <td>Main text:</td><td><a href="docs/GametextforPhylo.rtf">[Rich text format]</a>&nbsp;<a href="docs/GametextforPhylo.docx">[Word]</a>&nbsp;<a href="docs/GametextforPhylo.odt">[OpenDocument]</a></td>
+            </tr>
+                <td>Tutorial text:</td><td><a href="docs/TutorialtextforPhylo.rtf">[Rich text format]</a>&nbsp;<a href="docs/TutorialtextforPhylo.docx">[Word]</a>&nbsp;<a href="docs/TutorialtextforPhylo.odt">[OpenDocument]</a></td>
+            </tr>
+        </table>
+        </p>
+        
+        <p>
+        <b>Step 2:</b> Translate these two files as indicated in the header of the document.
+        </p>
+        
+        <p>
+        <b>Step 3:</b> Indicate the language and your name in the first fields, so that we can credit you on our credits page!
+        </p>
+        
+        <p>
+        <b>Step 4:</b> Return your file completed to <a href="mailto:phylo-submit@cs.mcgill.ca?subject=[Phylo] Translation">phylo-submit@cs.mcgill.ca</a>
+        </p>
+        
+        <p>
+        N.B.: Phylo has already been translated in 9 languages but translations can always be improved. If you want to improve existing translation please email us at
+        <a href="mailto:phylo-info@cs.mcgill.ca?subject=Improving existing translation">phylo-info@cs.mcgill.ca</a> and we will send you the files currently used for any language.
+        </p>
+
+              
+
+        
+        
+      <hr>
+
+      <footer>
+        <p>&copy; (2012) McGill University. All Rights Reserved.</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>
