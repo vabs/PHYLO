@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-        <title>Phylo | DNA Puzzles</title>
+    <title>Phylo | DNA Puzzles</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -14,6 +14,10 @@
         padding-top: 60px;
         padding-bottom: 40px;
       }
+		td {
+			width: 40%;
+			border-bottom: 1px solid #ddd;
+		}
     </style>
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
 
@@ -67,44 +71,43 @@
         To reach this goal, we need your help! This page contains all the material and instructions you need to
         contribute to the Phylo project and help us to make a version of the game in your favorite language.
         </p>
-        
-        <p>
-        <b>Step 1:</b> For conveniencies, the text to be transalated is split in two files. The first one (Main text)
-        contains the text used in the game and satellite pages. The second one (Tutorial text) contains the text
-        used in the tutorial. We provided these two files in 3 format: Rich Text Format (.rtf), Microsoft Word Document (.docx)
-        and OpenDocument (.odt). You can use the format of your choice. 
-        
-        Download the following file in your favorite format:
-        <table>
-            <tr>
-                <td>Main text:</td><td><a href="docs/GametextforPhylo.rtf">[Rich text format]</a>&nbsp;<a href="docs/GametextforPhylo.docx">[Word]</a>&nbsp;<a href="docs/GametextforPhylo.odt">[OpenDocument]</a></td>
-            </tr>
-                <td>Tutorial text:</td><td><a href="docs/TutorialtextforPhylo.rtf">[Rich text format]</a>&nbsp;<a href="docs/TutorialtextforPhylo.docx">[Word]</a>&nbsp;<a href="docs/TutorialtextforPhylo.odt">[OpenDocument]</a></td>
-            </tr>
-        </table>
-        </p>
-        
-        <p>
-        <b>Step 2:</b> Translate these two files as indicated in the header of the document.
-        </p>
-        
-        <p>
-        <b>Step 3:</b> Indicate the language and your name in the first fields, so that we can credit you on our credits page!
-        </p>
-        
-        <p>
-        <b>Step 4:</b> Return your file completed to <a href="mailto:phylo-submit@cs.mcgill.ca?subject=[Phylo] Translation">phylo-submit@cs.mcgill.ca</a>
-        </p>
-        
+		<p>
+		Please fill out the form below by selecting the source language you wish to translate from, the localized
+		name of the language you are translating into (the target), and your name(s). Then simply fill in the
+		blank on the right with your translation. Finally, press "Generate Translation" at the bottom of the
+		page and follow the submission procedure indicated.
+		</p>
+
+	<form id="generate" action="javascript:void(0)">
+	<table><tbody id="main-forum">
+		<tr id="main-forum-info-lang"><td><p>Source language is
+		    <select id="src-lang">
+		    <!-- Values correspond to language file names. Maintain an up to date listing here. -->
+		    <option value="EN">English</option>
+		    <option value="FR">Français</option>
+		    <option value="HE">עברית</option>
+		    <option value="PT">Português</option>
+		    <option value="RO">Român</option>
+		    <option value="RU">Pусский</option>
+		    <option value="SP">Español</option>
+		    <option value="ZH-CN">中文简体</option>
+		    <option value="ZH-HK">中文繁體</option>
+		    </select>.</p></td>
+		    <td>Target language is
+		    <input type="text" style="width: 76%" id="main-forum-info-lang-tgt" />.
+		    </td></tr>
+		<tr><td><p>Language code <span id="src-lang-code"></span>.</p></td>
+		    <td><p>Language code <input type="text" style="width:79%" id="tgt-lang-code" />.</p></td></tr>
+		<tr id="main-forum-info-author"><td>Author: .</td>
+		    <td>Author: <input style="width: 86%" type="text" id="main-forum-info-author-tgt" />.</td></tr>
+	</tbody></table>
+	<input type="submit" value="Generate Translation Code" />
+	</form>
+	<div id="generatedcode"></div>
         <p>
         N.B.: Phylo has already been translated in 9 languages but translations can always be improved. If you want to improve existing translation please email us at
-        <a href="mailto:phylo-info@cs.mcgill.ca?subject=Improving existing translation">phylo-info@cs.mcgill.ca</a> and we will send you the files currently used for any language.
+        <a href="mailto:phylo-info@cs.mcgill.ca?subject=Improving existing translation">phylo-info@cs.mcgill.ca</a>.
         </p>
-
-              
-
-        
-        
       <hr>
 
       <footer>
@@ -116,7 +119,9 @@
     <!-- javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery.js"></script>
+    <script src="http://phylo.cs.mcgill.ca/master/lib/jquery/jquery.js"></script>
+	<script src="http://phylo.cs.mcgill.ca/master/lib/underscore/underscore.js"></script>
+	<script src="http://phylo.cs.mcgill.ca/master/js/phylo-lib/helper.core.js"></script>
     <script src="js/bootstrap-transition.js"></script>
     <script src="js/bootstrap-alert.js"></script>
     <script src="js/bootstrap-modal.js"></script>
@@ -129,6 +134,93 @@
     <script src="js/bootstrap-collapse.js"></script>
     <script src="js/bootstrap-carousel.js"></script>
     <script src="js/bootstrap-typeahead.js"></script>
-
+	<script type="text/javascript">
+	function update_source_language() {
+		src_lang_code = $("#src-lang option:selected").attr("value");
+		$("#src-lang-code").text(src_lang_code);
+		$.getScript("http://phylo.cs.mcgill.ca/master/lang/"+src_lang_code+".js").done(function(script, textStatus) {
+			var language = window[src_lang_code+"script"].lang[0];
+			$("#main-forum-info-author").children().filter(function(idx) {return 1 ? idx == 0 : 0})
+			.text("Author: "+language.info.author+".");
+			var queue = []; // FIFO
+			$.each(language, function(field, val) {
+				if (field === "info"); // Special case for language, author.
+				else {
+					if (_.isString(language[field])) {
+						alert("Source language uses an unrecognized format; some fields may be missing.");
+						//TODO - not used presently.
+					} else { queue.push([language[field], "main-forum-"+field.replace(/\s/g, "-")]); }
+				}
+			});
+			while (queue.length > 0) {
+				var tuple = queue.shift();
+				var obj = tuple[0];
+				var prefix = tuple[1];
+				$.each(obj, function(field, val) {
+					var ident = prefix+"-"+field.toString().replace(/\s/g, "-");
+					if (_.isString(obj[field])) {
+						if ($("#"+ident)[0]) {
+							$("#"+ident).children().filter(function(idx) {return 1 ? idx == 0 : 0})
+							.text(obj[field]);
+						} else {
+							$("#main-forum").append("<tr id=\""+ident+"\"><td>"
+									                +obj[field]+"</td><td><input style=\"width: 95%\" type=\"text\" id=\""+ident+"-tgt\" /></td></tr>");
+						}
+					} else { queue.push([obj[field], ident]); }
+				});
+			}
+		}).fail(function(jqxhr, settings, exception) { console.log("Unable to load language."); });
+	};
+	$(document).ready(function(event) {
+		$.ajaxSetup({ cache: true });
+		update_source_language();
+		$("#src-lang").change(update_source_language);
+		$("#generate").submit(function() {
+			var out_code = ["(function(){function g() {};g.prototype.lang=[{"];
+			var src_lang = window[src_lang_code+"script"].lang[0];
+			var queue = []; // deque
+			$.each(src_lang, function(field, val) {
+				if (_.isString(src_lang[field])) {
+					//TODO - not used presently.
+				} else { queue.push([src_lang[field], "main-forum-"+field.replace(/\s/g, "-"), field]); }
+			});
+			while (queue.length > 0) {
+				var tuple = queue.shift();
+				if (tuple === true) {
+					out_code.push("},");
+					continue;
+				}
+				var obj = tuple[0];
+				var prefix = tuple[1];
+				var inner = false;
+				out_code.push("\""+tuple[2]+"\" : {");
+				$.each(obj, function(field, val) {
+					var ident = prefix+"-"+field.toString().replace(/\s/g, "-");
+					if (_.isString(obj[field])) {
+						// This must be in the table.
+						var trans = $("#"+ident).children().filter(function(idx) {return 1 ? idx == 1 : 0})
+						            .children().attr("value");
+						out_code.push("\""+field+"\": \""+trans+"\",");
+					} else {
+						if (!inner) queue.unshift(true);
+						queue.unshift([obj[field], ident, field]);
+						inner = true;
+					}
+				});
+				if (!inner) out_code.push("},");
+			}
+			out_code.push("}];");
+			out_code.push("var proto = g.prototype, attr = [[\"lang\",proto.lang]];");
+			out_code.push("common.exportSingleton(\""+$("#tgt-lang-code").attr("value")+"script\",g,attr)");
+			out_code.push("})();");
+			$("#generatedcode").empty()
+			$("#generatedcode").append("<p>Please submit a copy of the following to <a href=\"mailto:phylo-submit@cs.mcgill.ca?subject=[Phylo] Translation\">phylo-submit@cs.mcgill.ca</a> with file name "
+			                           +$("#tgt-lang-code").attr("value")+".js</p>");
+			$("#generatedcode").append("<pre>"+out_code.join("\n")+"</pre>");
+			window.location.hash = "#generatedcode";
+			return false;
+		});
+	});
+	</script>
   </body>
 </html>
