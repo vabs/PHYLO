@@ -146,14 +146,14 @@
 
 			ctx.closePath();
 			var selection = [];
-
+			//custom added for 4th in menuStr
 			var menuStr = [window.lang.body.play.gameselect.levelselect.random["field 2"],window.lang.body.play.gameselect.levelselect["level id"]["field 2"],window.lang.body.play.gameselect.levelselect.disease["field 1"],window.lang.body.play.gameselect.levelselect.custom["field 1"]];
 
 			var menuIcon = [
 					["img/random.png",95,95],
 					["img/id.png",95,95],
 					["img/disease.png",95,95],
-					["img/settings.png",95,95]
+					["img/settings.png",95,95]	//custom icon
 					];	
 			var menuIconHover = ["img/random_hover.png","img/id_hover.png","img/disease_hover.png","img/options.png"]	
 
@@ -211,7 +211,7 @@
 					if(x <= eX && eX <= x+menuIcon[i][1] &&
 						y <= eY && eY <= y+menuIcon[i][2]) { 
 						switch(i) {
-						case 3:
+						case 3:	//case for custom
 							ctx.beginPath();
 							ctx.clearRect(0,0,1024,450);
 							ctx.closePath();
@@ -299,7 +299,7 @@
 				};
 			} 
 
-			var custom = function(ctx) {
+			var custom = function(ctx) { //custom
 				$("#custom_inputfile1").show();
 				ctx.beginPath();
 				ctx.save();
@@ -598,7 +598,7 @@
 						ctx.closePath();
 						selection = [];
 						//selection.push(new highscore(ctx));
-						for(var i=0;i<4;i++) {
+						for(var i=0;i<4;i++) {	
 							selection.push(new cell(ctx, 250+(160*i), 260,i));
 						}
 						var banner = new Image();

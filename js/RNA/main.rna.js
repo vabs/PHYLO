@@ -43,7 +43,19 @@
 			//sets the layout and activates the game
 			callBack : function() {
 				//sets the gameBoard to be nonMovable on touch devices.
-				$.events.touch("#gameBoard",{
+				var countL=0;
+				for (var xx=0;xx<$.phylo.get.sequence.length;xx++){			//checks for length of longest sequence
+					if ($.phylo.get.sequence[xx].length > countL){
+						countL = $.phylo.get.sequence[xx].length;
+					}
+				}
+				if (countL > 25) {
+					var tt = countL%25;										//set sequence length to factor of 25
+					$.phylo.seqLen = countL+tt;
+				} else {
+					$.phylo.seqLen = 25;									//default size = 25
+				}
+				$.events.touchRNA("#gameBoardRNA",{
 					start: function(e) {
 					}, move : function(e) {
 					}, end : function(e) {
@@ -62,7 +74,7 @@
 				$.phylo.origin = [];
 				for(var i=0;i<8;i++){
 					var t = [];
-					for(var j=0;j<25;j++) {
+					for(var j=0;j<$.phylo.seqLen;j++) {
 						t.push(0);		
 					}
 					$.phylo.origin.push(t);
@@ -100,7 +112,7 @@
 					if(DEBUG)
 						$.helper.dump($.sequence.track);
 					if(mouseMove) {
-						$.multiSelect.active();
+						$.multiSelect.activeRNA();
 					}
 				} else {
 					$("#countDown").show();
@@ -111,7 +123,7 @@
 						if(DEBUG)
 							$.helper.dump($.sequence.track);
 						if(mouseMove) {
-							$.multiSelect.active();
+							$.multiSelect.activeRNA();
 						}
 					});
 				}

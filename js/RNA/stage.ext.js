@@ -1,13 +1,12 @@
 (function() {
 	$.stage.roundRNA = function()  {	
-			//for testing
 			if(this.current < this.last){
 				this.current+=1;
 				this.setRNA(this.current);
 			} else if(this.current === this.last) {
 				this.end = true;
 				$.timer.stop();
-				$.endGame.completeRNA();
+				$.endGame.completeRNA();  //completeRNA
 				return "end game";
 			} 
 	},
@@ -18,7 +17,7 @@
 			$(".boardRow").removeClass("current").removeClass("blocked");
 			var addClass = function(n) {
 				var g = n+1;
-				for(var i=g;i>=0;i--) {
+				for(var i=g;i>=0;i--) { //increment by 1 each stage
 					$("#row"+i).removeClass("hidden").addClass("current");
 				}
 			}
@@ -37,7 +36,7 @@
 			$.phylo.bestTrack = [];
 			for(var i=0;i<8;i++) {
 				var t = [];
-				for(var j=0;j<25;j++) 
+				for(var j=0;j<$.phylo.seqLen;j++) 
 					t.push(0);
 				tmp.push(t);
 				$.phylo.bestTrack.push(t);
@@ -48,12 +47,12 @@
 			$.helper.copy($.sequence.track, $.phylo.origin);
 			//$.sequence.track = $.phylo.origin.slice(0);
 			//set par score
-			var par = $.fitch.score();
+			var par = $.fitch.scoreRNA();
 			$.helper.copy($.sequence.track, tmp);
 			//$.sequence.track = tmp.slice(0);
 			$.sequence.par = par;
 			$.board.par(par);
-			var score = $.fitch.score();
+			var score = $.fitch.scoreRNA();
 			$.phylo.bestScore = score;
 			$.board.score(score);
 			//

@@ -16,7 +16,17 @@
 	z-index:2;
 
 }
-.sequence, .ancestor {
+#gameBoardRNA {
+	position: relative;
+	display:inline-block;
+	color: #6D6D6D;
+	overflow: auto;
+	height: 400px;
+	width: 841px;/*841px;*/
+	top: 0px;/*-335px;*/
+	padding-top: 20px;/*20px;*/
+}
+.sequenceRNA {
 	height:0px;
 	width:0px;
 	position:absolute;

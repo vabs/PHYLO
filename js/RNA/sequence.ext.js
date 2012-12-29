@@ -18,10 +18,10 @@
 					var c = seq[i].charAt(j);
 					var d = struc[i].charAt(j);
 					if(c !=  "_" && d !="_") {
-						seq[i] = seq[i].substr(0, j) + this.nucNew(this.translateRNA(c,d)) + seq[i].substr(j+1,seq[i].length);
+						seq[i] = seq[i].substr(0, j) + this.nucNew(this.translateRNA(c,d)) + seq[i].substr(j+1,seq[i].length);	//get sequences in array (format from nucNew)
 						this.posList[i*$.phylo.seqLen+counter] = counter;	
 						this.nucleotide[i*$.phylo.seqLen+counter] = seq[i].charAt(j);						
-						str+="<div class='sequence "+ this.bcolor(this.translateRNA(c,d)) + "' id='"+(i*25+counter)+"' style='left:"+(this.calcPos(j))+"px;'></div>";
+						str+="<div class='sequenceRNA "+ this.bcolor(this.translateRNA(c,d)) + "' id='"+(i*$.phylo.seqLen+counter)+"' style='left:"+(this.calcPos(j))+"px;'></div>";
 						counter++;
 					}
 				}	
@@ -33,9 +33,14 @@
 				str+="</div>";
 			} 
 			$("#gameBoard").append("<div id='movingParts'>"+str+"<div>");
+			var pix = $.phylo.seqLen * 33.94;
+			$('.boardRow').css('width', pix+'px');
 			$.phylo.get.sequenceRNA = seq;
 		},
-		nucNew : function(x) {
+	$.sequence.calcPosRNA : function(pos) {
+			return 32.94*pos+(pos);					// 824/25 = 32.94; 
+		},
+	$.sequence.nucNew : function(x) {
 			if(x == 1)
 				return "A";
 			if(x == 2)
@@ -51,7 +56,7 @@
 			if(x == 7)
 				return "3";//Cright
 			if(x == 8)
-				return "4";//URight
+				return "4";//Uright
 			if(x == 9)
 				return "5";//Aleft
 			if(x == 10)
@@ -63,7 +68,7 @@
 			return null;
 		},
 		//gets the color tag of respected nucleotide 
-		bcolor : function(x) {
+	$.sequence.bcolor : function(x) {
 			if(x == 1)
 				return "str-A";
 			if(x == 2)
@@ -91,7 +96,7 @@
 			return null;
 		},
 
-		translateRNA : function(x,y) {
+	$.sequence.translateRNA : function(x,y) {
 			if(x == "A" && y == ".") 
 				return 1;
 			if(x == "G" && y == ".")

@@ -65,6 +65,21 @@
 						document.getElementById('store_structure').innerHTML = "readyStr";
 						document.getElementById('store_sequence').innerHTML = "readySeq";
 						document.getElementById('store_name').innerHTML = "readyName";
+						var countLeft = 0;
+						var countRight = 0;
+						for (var gi=0;gi<$.phylo.get.structure.length;gi++){
+							for (var gl=0;gl<$.phylo.get.structure[gi];gl++){
+								if ($.phylo.get.structure[gi].charAt(gl) == "("){
+									countLeft++;
+								} else if ($.phylo.get.structure[gi].charAt(gl) == ")") {
+									countRight++;
+								}
+							}
+						}
+						if (countLeft != countRight){
+							alert("incorrect structure");										//checks for pairing if incorrect, alert and abort
+							return;
+						}
 						$.rna.callBack();
 			    }
 				
@@ -74,12 +89,12 @@
 			        	var reader = new FileReader();
 			          	reader.onloadend = function rSeq(e) {
 			          		var f2 = e.target.result.split("\r\n");
-			          		if (f2[0].charAt(0) != ">"){
+			          		if (f2[0].charAt(0) != ">"){	//check for name
 			          			alert("Incorrect file format")
 			          			return;
 			          		}
 						for (var i = 0;i < f2.length;i++){
-							if (f2[i].charAt(0) == ">") {
+							if (f2[i].charAt(0) == ">") {	//check for name
 								if (f2[i+1] == ""){
 									alert("Incorrect file format");
 									return;
@@ -169,7 +184,7 @@
 				//var dummy = '{"level":{"attributes":{"id":"1505"},"sequence":["---TCC----CAG-----CTG","CCCTCC----CAA-----CTC","---CCT----CAGCGGGCCC-","-----------------AGCC","---Tctgccctcacggaacac"],"tree":"(((hg19,rheMac2),(bosTau4,canFam2)),loxAfr3);"}}';
 				//var dummy = '{"level":{"attributes":{"id":"3394"},"sequence":["----A-----------CTTCT","----A-----------CTTCT","----G----AGTGGGCCTGGG","----GTACCTGCGCGTCCAGG"],"tree":"((hg19,rheMac2),(bosTau4,canFam2));"}}';
 				//var dummy = '{"level":{"attributes":{"id":"18"},"sequence":["cggcgcgcgccg---------","tggtgtgtgtgt---------","AGCCGCCAGCGC---------","AGGAGCCCATCT---------","TTGGGC-CTCTC---------","gTGCGCGCACTC---------","ACACACACACGCAGGgggagg"],"tree":"(((hg19,(galGal3,taeGut1)),xenTro2),((tetNig2,fr2),gasAcu1));"}}';
-				var dummy = '{"level":{"attributes":{"id":"1505"},"structure":["---(((----......","((()))----...-----...","---(((----)))....","-----------------((((","---.................."],"sequence":["---UCC----CAGCUG","CCCUCC----CAA-----CUC","---CCU----CAGCGGG","-----------------AGCC","---UcUgcccucacggaacac"]}}';
+				var dummy = '{"level":{"attributes":{"id":"1505"},"name":[">1",">2",">3",">4",">5",">6",">7",">8",">9",">10"],"structure":["---((--))-......","((()))----...-----...","---(((----)))....","-----------------(())","---.................."],"sequence":["---UC--GG-CAGCUG","CCCUCC----CAA-----CUC","---CCU----CAGCGGG","-----------------AGCC","---UcUgcccucacggaacac"]}}';
 
 				console.log(">> Cannnot connect to database");
 				console.log(">> loading dummy data");
@@ -202,7 +217,7 @@
 				if(DEBUG) {
 					j.sequence;
 				}
-				$.phylo.get.name = [">1",">2",">3",">4",">5",">6",">7",">8",">9",">10"];
+				$.phylo.get.name = j.name;
 				$.rna.callBack();
 			});
 		},

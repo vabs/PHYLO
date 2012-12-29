@@ -1,0 +1,68 @@
+readMe
+rna.css -	gameBoardRNA: new board for RNA - it allows overflow now with default html scroll
+			custom_inputfile1: file input for custom mode in RNA
+			sequenceRNA: sequence css for square, left triangle, right triangle
+			str-A, C, G, U, .... css for nucleotide + structure
+			store-sequence, name, structure: hidden p elements for storing data from input
+			endGame-download: new button for download solution into text file
+	
+gameMenu.ext.js - added 4th menu in main screen for custom menu (commented)
+				  loop in back function loops 4 times to add 4 menus
+				  display icon for custom is not implemented so "setting" icon is used instead
+				  position adjusted to fit 4 selections
+				  custom menu takes a file input to generate RNA puzzle
+				  custom_inputfile1 added to take input
+
+protocal.ext.js - added another mode "custom" to take custom input file
+				  custom mode invokes handleFileSelect2 to read file input and pause until read is done
+				  handleFileSelect2 read and parse properties (name, sequence, structure) into innerHTML of hidden p elements
+				  when read is done handleFileSelect2 invokes send
+				  send parses strings from innerHTML into global variables and callback main
+				  other ajax function is untouched except for dummy in fail case
+				  
+main.rna.js - callBack adjusts length of board by changing $.phylo.seqLen to some factor of 25 based on the length of longest sequence in input
+			  $.stage.last changed to # of sequence-2 since each stage adds one more sequence
+			  
+sequence.ext.js - buildRNA: takes sequence and structure input
+							parse both input and translate for 12 cases based on input
+							re-store nucleotides in sequence array based on 12 cases (nucleotide & structure) details in comment
+							
+				- calcPosRNA: number adjusted to 32.94 from 32 to prevent inappropriate shifting of blocks when it "snaps"
+				- nucNew: re-name nucleotides based on its corresponding structure
+				- bcolor: assign block color and shape (square/left triangle/right triangle) based on 12 cases
+				- translateRNA: assign cases based on nucleotide and structure
+
+stage.ext.js - setRNA: now shows one more sequence block on each stage starting from 2 (2, 3, 4, 5...)
+
+board.ext.js - convertColorRNA: converts css blocks to corresponding RNA and its structure by returning string of 2 characters; first one corresponds to nucleotide and second corresponds to structure
+			 - getJsonAlignmentsRNA: parse current solution to puzzle ($.sequence.track) into nucleotides and sequences also supports gaps
+
+endGame.ext.js - completeRNA: create element endGame-download and append it after endGame-replay only happens if it does not exist
+				 endGame-download: calls getJsonAlignmentsRNA for sequence and structure of solution
+								   parse solution data into string in order based on $.phylo.name
+								   format of this string is fasta:
+								   >name1
+								   seq
+								   >name1
+								   structure
+								   href the string as text file - downloaded on click
+								   name of file is default download(#)
+
+fitch.ext.js - scoreGetRNA: added sMatch variable for structure match of pairs
+							it passes all possible pairing of given sequences in stage (brutal force)
+							each pair is passes for scoring and added together
+							scoring between pair of sequences is done in following way:
+							2 additional array is generated to store numbering of structure pairs so that (()(())) becomes 01123320
+							match and mismatch cases were done with 12 cases generated from nucNew in sequence module
+							for structure match (sMatch) the numbering of structure pair from arr2 and seq2 are stored in check1 and check2 when "(" structure match is found
+							check1 and check2 are used to check the match for ")" structure match by comparing the pairing number for ")" to stored pairing in check1&2 based on the position in array
+							if numbering of structure pair for ")" matches corresponding "(" match, sMatch score is incremented
+
+events.ext.js - getFingerPosRNA: added new variable to keep track of horizontal position when scrolling (posL)
+				variables in events function changed to use functions for RNA
+
+multiSelect.ext.js - captureRNA: added new variable posL to keep track of horizontal position when scrolling
+								 box.X is adjusted with posL
+								 select.X length now changes based on seqLen instead of flat 1000
+					 other variable and function names changed for RNA
+					 

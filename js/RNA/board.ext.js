@@ -1,5 +1,5 @@
 (function() {
-			$.board.getJsonAlignmentsRNA = function() {
+		$.board.getJsonAlignmentsRNA = function() {
 			var self = this;
 			var track = $.sequence.track;
 			var st = "[";
@@ -15,8 +15,8 @@
 						st2+="";
 						st+="";
 					} else {
-						st2+=self.convertColorRNA($("#"+track[i][j]).css("border-color")).charAt(0);
-						st+=self.convertColorRNA($("#"+track[i][j]).css("border-color")).charAt(1);
+						st2+=self.convertColorRNA($("#"+track[i][j]).css("border-color")).charAt(0); //nucleotide
+						st+=self.convertColorRNA($("#"+track[i][j]).css("border-color")).charAt(1);  //structure
 					}
 				}
 				st2+='"}';
