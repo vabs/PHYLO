@@ -19,8 +19,8 @@
 
 package com.CSB.Phylo;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.webkit.CookieManager;
 import org.apache.cordova.*;
 
 public class Phylo extends DroidGap
@@ -28,8 +28,11 @@ public class Phylo extends DroidGap
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        CookieManager.setAcceptFileSchemeCookies(true);
         super.onCreate(savedInstanceState);
-        super.loadUrl("file:///android_asset/www/index.html");
+        // Set by <content src="index.html" /> in config.xml
+        super.loadUrl(Config.getStartUrl());
+        //super.loadUrl("file:///android_asset/www/index.html")
     }
 }
 

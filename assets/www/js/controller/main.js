@@ -12,6 +12,7 @@
 			views : '../views',
 			models : '../models',
 			dev : '../devTools',
+			phonegap: '../phonegap'
 		},
 		shim : {
 			'jquery-ui' : {
@@ -93,7 +94,7 @@
 				deps : ['jquery'],
 			},
 			'validation/login.validation' : {
-				deps : ['jquery', 'DNA/protocal.core', 'validation/cookie.validation'],
+				deps : ['jquery','phonegap/cordova-2.5.0', 'DNA/protocal.core', 'validation/cookie.validation'],
 			},
 			'views/DT_bootstrap_ranking.actions' : {
 				deps : ['jquery','bootstrap','jquery.dataTables'],

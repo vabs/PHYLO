@@ -18,7 +18,7 @@
        under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:windowSoftInputMode="adjustPan"
-      package="com.CSB.Phylo" android:versionName="1.1" android:versionCode="5" android:hardwareAccelerated="true">
+      package="com.CSB.Phylo" android:versionName="1.0" android:versionCode="1" android:hardwareAccelerated="true">
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="true"
@@ -51,7 +51,6 @@
         android:debuggable="true">
         <activity android:name="Phylo" android:label="@string/app_name"
                 android:theme="@android:style/Theme.Black.NoTitleBar"
-                android:screenOrientation="landscape"
                 android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

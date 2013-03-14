@@ -3,8 +3,11 @@
 		//hide logout on default
 		$("#logout").hide();
 
-		// init page: check cookie and register user if login using social account for the first time 
+		// init page: check cookie and register user if login using social account for the first time
+
 		if($.cookie.read("username")) {
+		    console.log("username"+$.cookie.read("username"));
+
 		    $(".login-btn").unbind("click");
 		    var username = $.cookie.read("username");
 		    var fullname = $.cookie.read("fullname");
@@ -13,9 +16,11 @@
 		    if (provider=="Classic") {
 			$(".m_login").html(username);
 		    } else {
-			$.get("http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/login.php?provider=" + provider + "&restart=0",function(data){
+		    $.get("http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/login.php?provider=" + provider + "&restart=0",function(data){
 			    var userinfo = eval ("(" + data + ")");
-			    if (userinfo.identifier) {
+			    console.log(userinfo.email);
+
+			        if (userinfo.identifier) {
 				// complete infos stored in cookie
 				var net_logid = userinfo.identifier;
 				var email = userinfo.email;
@@ -78,6 +83,7 @@
 						    }
 						});
 					    }
+
 					});
 				    }).fail(function() {
 					$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 21"]);
@@ -130,6 +136,7 @@
 			    }
 			});
 		    }
+
 		    $("#logout").show();
 		    window.guest = fullname;
 		    $("#login-box").hide();
@@ -160,12 +167,12 @@
 				if((username == "" || password == "")) {
 					$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 20"]);
 					return;
-				} 
+				}
 
 				$("div.login-warning").hide();
 
 				$.protocal.login(username, password, function(re) {
-					if(re == "succ") {	
+					if(re == "succ") {
 						$(".m_login").html(username);
 						$.cookie.create("username",username,365);
 			    $.cookie.create("fullname",username,365);
@@ -194,19 +201,33 @@
 			    });
 					} else {
 						$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 16"]);
-					}			
+					}
 				});
 			};
-		// Social login onclick event
+       // Social login onclick event
 		var socialLogin = function(provider) {
 		    start_url = "http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/login.php?provider="+provider+"&restart=1";
 		    win = window.open(
 			start_url,
-			"hybridauth_social_signin",
-			"location=0,status=0,scrollbars=0,width=800,height=500"
+			'hybridauth_social_signin',
+			'location=no,clearcache=yes'// if we are using restart=1 for hybridauth, user is first login
 		    );
+		    win.addEventListener('loadstop', function(event){
+		                processLoginCallback(event.url,start_url,win);
+
+		    } );
 		};
-			      
+
+        var processLoginCallback= function(newloc,redirect_url,popup){
+                             console.log("locationchange detected\n"+win+"\n"+newloc+"\n"+redirect_url+"\n");
+                             if(newloc.indexOf(redirect_url) == 0)
+                             {
+                                    popup.close();
+                                    location.reload();
+                             }
+        };
+
+
 		//login click event
 		$(".login-btn").click(function() {
 			classicLogin();
@@ -223,7 +244,7 @@
 		$(".zocial.linkedin").click(function() {
 		    socialLogin('LinkedIn');
 		});
-			      
+
 			//logout event
 			$(".m_logout").click(function() {
 				window.guest = "Guest";
@@ -254,13 +275,13 @@
 					var name = $("#username").val().trim();
 					var password = $("#password").val().trim();
 					var email = $("#email").val().trim();
-					if((name == "" || password == "") || email == "") { 
+					if((name == "" || password == "") || email == "") {
 						$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 20"]);
 						return;
-					} 
+					}
 					$.protocal.register(name, name, password, email,'Classic',0, function(re) {
 						if(re == "succ") {
-							$(".login-btn").unbind("click");	
+							$(".login-btn").unbind("click");
 							$(".m_login").html(name);
 							$("#logout").show();
 							window.guest = name;
@@ -269,7 +290,7 @@
 							$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 22"]);
 						}
 					});
-				}	
+				}
 			});
 			$(".cancel-btn").click(function() {
 				$(".email-holder").hide();
