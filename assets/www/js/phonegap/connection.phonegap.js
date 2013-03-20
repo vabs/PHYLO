@@ -1,0 +1,1 @@
+/*check phonegap connection to wirelss or data network status*/

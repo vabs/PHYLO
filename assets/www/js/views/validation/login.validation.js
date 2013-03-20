@@ -3,234 +3,266 @@
 		//hide logout on default
 		$("#logout").hide();
 
-		// init page: check cookie and register user if login using social account for the first time
+        /*-----------------------------------HybridAuth Functions-------------------------*/
+        //update/create localstorage key/value from hybrdiauth
+        var hybridAuthSecond = function(provider,reload){
+                      var url="http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/login.php?provider="+provider+"&restart=0";
+                      //TODO, connection check 
+                      $.ajax({
+                        type: 'GET',
+                        url: url,
+                        success: function(data, textStatus ){
+                                var userinfo = eval ("(" + data + ")");
+                                if(userinfo.identifier){
 
-		if($.cookie.read("username")) {
-		    console.log("username"+$.cookie.read("username"));
+                                     //if this is a reload 
+                                     if(!reload && 
+                                      window.localStorage.getItem("logid")!=userinfo.identifier
+                                     ){
+                                           failLoginCleanUp();
+                                           return;
+                                     }
 
-		    $(".login-btn").unbind("click");
-		    var username = $.cookie.read("username");
-		    var fullname = $.cookie.read("fullname");
-		    var provider = $.cookie.read("loginmode");
-		    var c_logid = $.cookie.read("logid");
-		    if (provider=="Classic") {
-			$(".m_login").html(username);
-		    } else {
-		    $.get("http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/login.php?provider=" + provider + "&restart=0",function(data){
-			    var userinfo = eval ("(" + data + ")");
-			    console.log(userinfo.email);
+                                     //user info
+                                     var username = provider+"_"+userinfo.identifier;
+                                     var fullname = userinfo.firstName+"+"+userinfo.lastName;
+                                     var email = userinfo.email;
+                                     var logid = userinfo.identifier
 
-			        if (userinfo.identifier) {
-				// complete infos stored in cookie
-				var net_logid = userinfo.identifier;
-				var email = userinfo.email;
-				if (c_logid==net_logid) {
-				    // check is user exists
-				    $.ajax({
-					   type: "POST",
-					   url : "http://phylo.cs.mcgill.ca/phpdb/passwdmanager.php",
-					   data : "username="+username+"&id="+c_logid,
-				     }).done(function(mypasswd) {
-					var password = mypasswd;
-					// a bit heavy. a simple table entry check would be enough.
-					$.protocal.login(username, password, function(re) {
-					    if(re != "succ") {
-						// login not successful -> register users
-						if((username == "" || password == "") || email == "") {
-						    $("div.login-warning").show().html(window.lang.body.social["field 3"].replace("***",provider));
-						    return;
-						}
-						$.protocal.register(username,fullname,password,email,provider,c_logid, function(re2) {
-						    if(re2 == "succ") {
-							console.log(provider + " registration successful. username: "+username);
-							// Update status
-							var message = fullname.replace("+"," ") + " " + window.lang.body.social["field 1"]+ " " + window.lang.body.social["field 20"];
-							var caption = window.lang.body.social["field 31"];
-							if ((provider=='Facebook')||(provider=='LinkedIn')) {
-							    var data = "provider="+provider+"&id="+c_logid+"&caption="+caption+"&description="+message;
-							} else {
-							    var data = "provider="+provider+"&id="+c_logid+"&description="+message;
-							}
-							bootbox.confirm(window.lang.body.social["field 2"],window.lang.body.social["field 26"],window.lang.body.social["field 25"], function(result) {
-							    if (result) {
-								console.log("post on " + provider + " : " + data);
-								$.ajax({
-								    type: "POST",
-								    url : "http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/feed.php",
-								    data : data,
-								}).done(function(re) {
-								    //bootbox.alert("Thank you for sharing the word. You can now start to play!");
-								}).fail(function() {
-								    bootbox.alert(window.lang.body.social["field 4"]);
-								});
-							    }
-							});
-						    } else {
-							console.log(provider + " registration failed.");
-							$("div.login-warning").show().html(window.lang.body.social["field 5"].replace("***",provider));
-							$.cookie.delete("username");
-							$.cookie.delete("fullname");
-							$.cookie.delete("loginmode");
-							$.cookie.delete("logid");
-							$("#logout").hide();
-							window.guest = 'guest';
-							$("#login-box").hide();
-							$(".login-btn").click(function() { classicLogin(); });
-							$(".m_login").html(window.lang.body.play.gameselect.login["field 2"]);
-							$(".showInLogin").hide();
-							window.showInLogin = false;
-							return;
-						    }
-						});
-					    }
+                                     window.localStorage.setItem("username",username);
+                                     window.localStorage.setItem("fullname",fullname);
+                                     window.localStorage.setItem("provider",provider);
+                                     window.localStorage.setItem("logid",logid);
+                                     
+                                     //TODO connection check
+                                     //get password from phylo db 
+                                     $.ajax({  type: 'POST',
+                                          url : "http://phylo.cs.mcgill.ca/phpdb/passwdmanager.php",
+                                          data : "username="+username+"&id="+userinfo.identifier,
+                                          success: function(mypasswd) {
 
-					});
-				    }).fail(function() {
-					$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 21"]);
-					$.cookie.delete("username");
-					$.cookie.delete("fullname");
-					$.cookie.delete("loginmode");
-					$.cookie.delete("logid");
-					$("#logout").hide();
-					window.guest = 'guest';
-					$("#login-box").hide();
-					$(".login-btn").click(function() { classicLogin(); });
-					$(".m_login").html(window.lang.body.play.gameselect.login["field 2"]);
-					$(".showInLogin").hide();
-					window.showInLogin = false;
-					return;
-				    });
-				    // display login
-				    $(".m_login").html(fullname.replace("+"," "));
-				    window.guest=fullname;
-				} else {
-				    //bootbox.alert("Data conflict. Please, login again.");
-				    $.cookie.delete("username");
-				    $.cookie.delete("fullname");
-				    $.cookie.delete("loginmode");
-				    $.cookie.delete("logid");
-				    $("#logout").hide();
-				    window.guest = 'guest';
-				    $("#login-box").hide();
-				    $(".login-btn").click(function() { classicLogin(); });
-				    $(".m_login").html(window.lang.body.play.gameselect.login["field 2"]);
-				    $(".showInLogin").hide();
-				    window.showInLogin = false;
-				    return;
-				}
-			    } else {
-				// failed to connect
-				$("div.login-warning").show().html(window.lang.body.social["field 6"].replace("***",provider));
-				$.cookie.delete("username");
-				$.cookie.delete("fullname");
-				$.cookie.delete("loginmode");
-				$.cookie.delete("logid");
-				$("#logout").hide();
-				window.guest = 'guest';
-				$("#login-box").hide();
-				$(".login-btn").click(function() { classicLogin(); });
-				$(".m_login").html(window.lang.body.play.gameselect.login["field 2"]);
-				$(".showInLogin").hide();
-				window.showInLogin = false;
-				return;
-			    }
-			});
-		    }
+                                              var password = mypasswd;
+                                              //TODO: connection check
+                                              $.protocal.login(username, password, function(re) {
+                                                     if(re != "succ") {
+                                                            if((username == "" || password == "") || email == "") {
+                                                                     $("div.login-warning").show().html(window.lang.body.social["field 3"].replace("***",provider));
+                                                                      return;
+                                                            }//end bad form 
+                                                            if(!reload){
+                                                              console.log("ERROR: not reload and user does not exit on phylo db!!!!");
+                                                            }
+                                                            //TODO should we do registration when not reload?
 
-		    $("#logout").show();
-		    window.guest = fullname;
-		    $("#login-box").hide();
-		    $(".login-btn").unbind("click");
-		    // show buttons. NB: hide expert button if necessary
-		    $.ajax({
-			type: "POST",
-			url : "http://phylo.cs.mcgill.ca/phpdb/phyloExpertDB.php",
-			data : "mode=8&user="+username,
-		    }).done(function(re) {
-			$(".showInLogin").show();
-			window.showInLogin = true;
-			if (re!='succ') {
-			    $(".showExpertOptions").hide();
-					window.showExpertOptions = false;
-			}
-		    }).fail(function() {
-			$(".showInLogin").show();
-			window.showInLogin = true;
-			console.log("Expert validation failed. Could not connect to the server.");
-		    });
-		};
+                                                            //registration on phylo network 
+                                                            $.protocal.register(username,fullname,password,
+                                                                       email,provider,logid,
+                                                                       function(re2) {
+                                                                            //if registration successful
+                                                                            if(re2== "succ"){
+                                                                                    console.log(provider + " registration successful. username: "+username);
+                                                                                    //Update status
+                                                                                    var message = fullname.replace("+"," ") + " " + window.lang.body.social["field 1"]+ " " + window.lang.body.social["field 20"];
+                                                                                    var caption = window.lang.body.social["field 31"];
+                                                                                    if ((provider=='Facebook')||(provider=='LinkedIn')) {
+                                                                                            var data = "provider="+provider+"&id="+c_logid+"&caption="+caption+"&description="+message;
+                                                                                    } else {
+                                                                                            var data = "provider="+provider+"&id="+c_logid+"&description="+message;
+                                                                                    }//if login  using LinkedIn or Facebook
+                                                                                    //fire bootbox(dialogue) for login
+                                                                                    bootbox.confirm(window.lang.body.social["field 2"],window.lang.body.social["field 26"],window.lang.body.social["field 25"], function(result) {
+                                                                                            if (result) {
+                                                                                               console.log("post on " + provider + " : " + data);
+                                                                                               //ajax to phylo hybridauth php TODO: what does this do?
+                                                                                               //TODO check connection
+                                                                                               $.ajax({
+                                                                                                        type: "POST",
+                                                                                                        url : "http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/feed.php",
+                                                                                                        data : data,
+                                                                                                      }).done(function(re) {
+                                                                                                          //bootbox.alert("Thank you for sharing the word. You can now start to play!");
+                                                                                                      }).fail(function() {
+                                                                                                         bootbox.alert(window.lang.body.social["field 4"]);
+                                                                                                      });//end ajax to phylo hybridauth
+                                                                                            }//if bootbox confirm return true
+                                                                                    });//bootbox confirm function and callback ends
+                                                                            }//if success registration re2
+                                                                            else{
+                                                                                      //registration fail
+                                                                                      console.log(provider + " registration failed.");
+                                                                                      $("div.login-warning").show().html(window.lang.body.social["field 5"].replace("***",provider));
+                                                                                      failLoginCleanUp();
+                                                                                      return;
+                                                                            }//registration re2 failed
+                                                             });//end registering user from social network into phylo database + callback
+                                                    }//end not successful login
+                                                });//end protocal.login
+                                      },//end ajax request to phylo + done success callback TODO, should really change "done" "fail" to success and error
+                                      error: function(){
+                                                    $("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 21"]);
+                                                    failLoginCleanUp();
+                                                    return;
+                                          }
+                                      });//end ajax request to phylo+ fail callback
+                                      //dispaly logined user on toolbar and set global variable
+                                      $(".m_login").html(fullname.replace("+"," "));
+                                      window.guest=fullname;
+                                                            
+                                }else{
+                                    $("div.login-warning").show().html(window.lang.body.social["field 6"].replace("***",provider));
+                                    failLoginCleanUp();
+                                    return;
+                                }//fail get userinfo
+                        },
+                        error: function(xhr, textStatus, errorThrown){
+                            //TODO connection problem, ask user to login again
+                        }//error
+                      });//end ajax
+        };//end hybridAuthSecond
+        /*----------------------------------------------------------------------------------*/
 
-			// Classic login onclick event
-			var classicLogin = function() {
-				var username = $("#username").val().trim();
-				var password = $("#password").val().trim();
-				if((username == "" || password == "")) {
-					$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 20"]);
-					return;
-				}
+    		// Classic login onclick event
+    		var classicLogin = function() {
+    				var username = $("#username").val().trim();
+    				var password = $("#password").val().trim();
+         			if((username == "" || password == "")) {
+    					$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 20"]);
+    					return;
+    				}
+    				$("div.login-warning").hide();
+                $.protocal.login(username, password, function(re) {
+          					if(re == "succ") {
+          					    $(".m_login").html(username);
+                            window.localStorage.setItem("username",username);
+                            window.localStorage.setItem("fullname",username);
+                            window.localStorage.setItem("provider","Classic");
+                            window.localStorage.setItem("logid","-1");
 
-				$("div.login-warning").hide();
+          			            $("#logout").show();
+          			            window.guest = username;
+          			            $("#login-box").hide();
+          			            $(".login-btn").unbind("click");
+          			            // show buttons. NB: hide expert button if necessary
+          			            $.ajax({
+          				            type: "POST",
+          			            	url : "http://phylo.cs.mcgill.ca/phpdb/phyloExpertDB.php",
+          				            data : "mode=8&user="+username,
+          			              success: function(result) {
+          				                $(".showInLogin").show();
+          				                window.showInLogin = true;
+          				                if (result!='succ') {
+          				                        $(".showExpertOptions").hide();
+          				                        window.showExpertOptions = false;
+          				                }
+          			              },
+                              error: function() {
+          				                $(".showInLogin").show();
+          				                window.showInLogin = true;
+          				                console.log("Expert validation failed. Could not connect to the server.");
+          			              }
+                            });
+          					} else {
+          				  		$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 16"]);
+          					}
+          		});
+    	    };
 
-				$.protocal.login(username, password, function(re) {
-					if(re == "succ") {
-						$(".m_login").html(username);
-						$.cookie.create("username",username,365);
-			    $.cookie.create("fullname",username,365);
-			    $.cookie.create("loginmode","Classic",365);
-			    $.cookie.create("logid",-1,365);
-			    $("#logout").show();
-			    window.guest = username;
-			    $("#login-box").hide();
-			    $(".login-btn").unbind("click");
-			    // show buttons. NB: hide expert button if necessary
-			    $.ajax({
-				type: "POST",
-				url : "http://phylo.cs.mcgill.ca/phpdb/phyloExpertDB.php",
-				data : "mode=8&user="+username,
-			    }).done(function(re) {
-				$(".showInLogin").show();
-				window.showInLogin = true;
-				if (re!='succ') {
-				    $(".showExpertOptions").hide();
-				    window.showExpertOptions = false;
-				}
-			    }).fail(function() {
-				$(".showInLogin").show();
-				window.showInLogin = true;
-				console.log("Expert validation failed. Could not connect to the server.");
-			    });
-					} else {
-						$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 16"]);
-					}
-				});
-			};
-       // Social login onclick event
-		var socialLogin = function(provider) {
-		    start_url = "http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/login.php?provider="+provider+"&restart=1";
-		    win = window.open(
-			start_url,
-			'hybridauth_social_signin',
-			'location=no,clearcache=yes'// if we are using restart=1 for hybridauth, user is first login
-		    );
-		    win.addEventListener('loadstop', function(event){
-		                processLoginCallback(event.url,start_url,win);
+            var loginSuccessUI = function (username ){
 
-		    } );
-		};
+                $("#logout").show();
+                $("#login-box").hide();
+                $(".login-btn").unbind("click");
+                // show buttons. NB: hide expert button if necessary
+                //TODO connection checking
+                $.ajax({
+                        type: "POST",
+                        url : "http://phylo.cs.mcgill.ca/phpdb/phyloExpertDB.php",
+                        data : "mode=8&user="+username,
+                }).done(function(re) {
+                        $(".showInLogin").show();
+                        window.showInLogin = true;
+                        if (re!='succ') {
+                              $(".showExpertOptions").hide();
+                            window.showExpertOptions = false;
+                        }
+                }).fail(function() {
+                        $(".showInLogin").show();
+                        window.showInLogin = true;
+                        console.log("Expert validation failed. Could not connect to the server.");
+                });
 
-        var processLoginCallback= function(newloc,redirect_url,popup){
-                             console.log("locationchange detected\n"+win+"\n"+newloc+"\n"+redirect_url+"\n");
+            };
+    	    //clean cookie and clean up UI to guest mode
+	        var failLoginCleanUp = function(){
+                  window.localStorage.removeItem("username");
+                  window.localStorage.removeItem("fullname");
+                  window.localStorage.removeItem("provider");
+                  window.localStorage.removeItem("logid");
+                  $("#logout").hide();
+                  window.guest = 'guest';
+                  $("#login-box").hide();
+                  $(".login-btn").click(function() { classicLogin(); });
+                  $(".m_login").html(window.lang.body.play.gameselect.login["field 2"]);
+                  $(".showInLogin").hide();
+                  window.showInLogin = false;
+	        };
+
+            // Social login onclick event
+      	   var socialLogin = function(provider) {
+      	     start_url = "http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/login.php?provider="+provider+"&restart=1";
+      	     win = window.open(
+      	     start_url,
+      		    'hybridauth_social_signin',
+      		    'location=no,clearcache=yes'// if we are using restart=1 for hybridauth, user is first login
+      	    );
+      	    win.addEventListener('loadstop', function(event){
+      	                processLoginCallback(event.url,start_url,win,provider);
+            });
+          };
+
+          var processLoginCallback= function(newloc,redirect_url,popup,provider){
                              if(newloc.indexOf(redirect_url) == 0)
                              {
                                     popup.close();
-                                    location.reload();
+                                    if(window && window.hasOwnProperty("location")){
+                                        //create cookie to jump start the login process after page refresh
+                                        window.localStorage.setItem("HybridAuthFirst","true");
+                                        window.localStorage.setItem("provider",provider);
+                                        window.location.reload();
+                                    }
                              }
         };
 
+        /*-------------------------------------------------------*/
+        //if this is a reload which happens when user login using social media
+        if(window.localStorage.getItem("HybridAuthFirst")=="true"){
+               //login & create localstorage cache
+               hybridAuthSecond(window.localStorage.getItem("provider"),true);
+               window.localStorage.removeItem("HybridAuthFirst");
+               loginSuccessUI(window.localStorage.getItem("username"));
+        }else{
+           var username = window.localStorage.getItem("username");
+           if(username && username!=""){
+              $(".login-btn").unbind("click");
+              //Case 1. Classic Login
+              if(provider == "Classic"){
+                    $(".m_login").html(username);//show username on toolbar
+                    window.guest = username;
+              }//end case 1.
+              else{
+                    hybridAuthSecond(window.localStorage.getItem("provider"),false);
+              }//end case 2
 
-		//login click event
+              loginSuccessUI(username);
+
+          }//end if existing record of user login
+        }//if not reload from hybridAuth first check
+
+
+        /*------------------------------------------------------------------------*/
+        //login click event
 		$(".login-btn").click(function() {
-			classicLogin();
+		    classicLogin();
 		});
 		$(".zocial.facebook").click(function() {
 		    socialLogin('Facebook');
@@ -245,33 +277,21 @@
 		    socialLogin('LinkedIn');
 		});
 
-			//logout event
-			$(".m_logout").click(function() {
-				window.guest = "Guest";
-				$.cookie.delete("username");
-		    $.cookie.delete("fullname");
-		    $.cookie.delete("loginmode");
-		    $.cookie.delete("logid");
-		    $("#logout").hide();
-		    window.guest = 'guest';
-		    $("#login-box").hide();
-				$(".login-btn").click(function() {
-					classicLogin();
-				});
-				$(".m_login").html(window.lang.body.play.gameselect.login["field 2"]);
-				$(".showInLogin").hide();
-			window.showInLogin = false;
-			});
 
-			//register event
-			$(".register-btn").click(function() {
+        //logout event
+		$(".m_logout").click(failLoginCleanUp);
+
+		//register event
+		$(".register-btn").click(function() {
+				//TODO: doc missing, only after enter email, will the cancel button's display==block
 				if($(".cancel-btn").css("display") == "none") {
-					$(".login-warning").hide();
-					$(".email-holder").show();
-					$(".register-btn").removeClass("register-btn-shift");
-					$(".login-btn").hide();
-					$(".cancel-btn").show();
-				} else {
+				    	$(".login-warning").hide();
+					    $(".email-holder").show();
+					    $(".register-btn").removeClass("register-btn-shift");
+					    $(".login-btn").hide();
+				    	$(".cancel-btn").show();
+				}else {
+				    //register user
 					var name = $("#username").val().trim();
 					var password = $("#password").val().trim();
 					var email = $("#email").val().trim();
@@ -279,6 +299,7 @@
 						$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 20"]);
 						return;
 					}
+
 					$.protocal.register(name, name, password, email,'Classic',0, function(re) {
 						if(re == "succ") {
 							$(".login-btn").unbind("click");
@@ -292,11 +313,13 @@
 					});
 				}
 			});
-			$(".cancel-btn").click(function() {
+
+        //cancel registration process
+		$(".cancel-btn").click(function() {
 				$(".email-holder").hide();
 				$(".register-btn").addClass("register-btn-shift");
 				$(".login-btn").show();
 				$(this).hide();
-			});
+		});
 	});
 })();

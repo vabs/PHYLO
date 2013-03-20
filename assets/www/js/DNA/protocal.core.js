@@ -1,6 +1,6 @@
 (function() {
 	var doc = document, win = window;
-	var url = "/phpdb/phyloExpertDB.php";
+	var url = "http://phylo.cs.mcgill.ca/phpdb/phyloExpertDB.php"
 	$.protocal = {
 		//for login
 		login : function(username, password, fn) {
@@ -11,11 +11,14 @@
 				url : url,
 				data : data,
 			}).done(function(re) {
+                console.log("login success");
 				fn(re);		
 			}).fail(function() {
+			    console.log("login failed");
 				$("div.login-warning").show().html("Could not connect to server, please try again later");
 			});
 		},
+
 		//for register
 		register : function(username, displayname, password, email,network,network_id, fn) {
 			var mode = 6;

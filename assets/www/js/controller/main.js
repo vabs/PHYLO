@@ -90,11 +90,9 @@
 			'DNA/lang.module' : {
 				deps : ['jquery'],
 			},
-			'validation/cookie.validation' : {
-				deps : ['jquery'],
-			},
+
 			'validation/login.validation' : {
-				deps : ['jquery','phonegap/cordova-2.5.0', 'DNA/protocal.core', 'validation/cookie.validation'],
+				deps : ['jquery','phonegap/cordova-2.5.0', 'DNA/protocal.core'],
 			},
 			'views/DT_bootstrap_ranking.actions' : {
 				deps : ['jquery','bootstrap','jquery.dataTables'],

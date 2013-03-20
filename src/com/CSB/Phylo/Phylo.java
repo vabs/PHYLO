@@ -28,7 +28,6 @@ public class Phylo extends DroidGap
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        CookieManager.setAcceptFileSchemeCookies(true);
         super.onCreate(savedInstanceState);
         // Set by <content src="index.html" /> in config.xml
         super.loadUrl(Config.getStartUrl());
