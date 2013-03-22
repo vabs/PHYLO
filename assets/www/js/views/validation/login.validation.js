@@ -2,22 +2,31 @@
 	$(document).ready(function() {
 		//hide logout on default
 		$("#logout").hide();
+        document.addEventListener("deviceready", onDeviceReady,false);
+    });
+
+    function onDeviceReady(){
+        var userCache = window.localStorage;
 
         /*-----------------------------------HybridAuth Functions-------------------------*/
         //update/create localstorage key/value from hybrdiauth
         var hybridAuthSecond = function(provider,reload){
                       var url="http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/login.php?provider="+provider+"&restart=0";
-                      //TODO, connection check 
+                      //TODO, connection check
+                      console.log("hybridAuthSecond,reload:"+reload);
                       $.ajax({
                         type: 'GET',
                         url: url,
                         success: function(data, textStatus ){
                                 var userinfo = eval ("(" + data + ")");
-                                if(userinfo.identifier){
 
-                                     //if this is a reload 
-                                     if(!reload && 
-                                      window.localStorage.getItem("logid")!=userinfo.identifier
+                                console.log("login success"+data);
+                                if(userinfo.identifier){
+                                     //if this is a reload, check if cached and new login information matches
+
+                                     console.log("hybridAuthSecond,identifier:"+userinfo.identifier+"\n cached:"+userCache.getItem("logid"));
+                                     if(!reload &&
+                                       userCache.getItem("logid")!=userinfo.identifier
                                      ){
                                            failLoginCleanUp();
                                            return;
@@ -29,11 +38,12 @@
                                      var email = userinfo.email;
                                      var logid = userinfo.identifier
 
-                                     window.localStorage.setItem("username",username);
-                                     window.localStorage.setItem("fullname",fullname);
-                                     window.localStorage.setItem("provider",provider);
-                                     window.localStorage.setItem("logid",logid);
-                                     
+                                     userCache.setItem("username",username);
+                                     userCache.setItem("fullname",fullname);
+                                     userCache.setItem("provider",provider);
+                                     userCache.setItem("logid",logid);
+                                     userCache.setItem("username",username);
+
                                      //TODO connection check
                                      //get password from phylo db 
                                      $.ajax({  type: 'POST',
@@ -99,10 +109,11 @@
                                                 });//end protocal.login
                                       },//end ajax request to phylo + done success callback TODO, should really change "done" "fail" to success and error
                                       error: function(){
+                                                    console.log("error function at 1st ajax hybridauth");
                                                     $("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 21"]);
                                                     failLoginCleanUp();
                                                     return;
-                                          }
+                                             }
                                       });//end ajax request to phylo+ fail callback
                                       //dispaly logined user on toolbar and set global variable
                                       $(".m_login").html(fullname.replace("+"," "));
@@ -115,7 +126,7 @@
                                 }//fail get userinfo
                         },
                         error: function(xhr, textStatus, errorThrown){
-                            //TODO connection problem, ask user to login again
+                                console.log("connection to hybridauth script failed");
                         }//error
                       });//end ajax
         };//end hybridAuthSecond
@@ -130,13 +141,13 @@
     					return;
     				}
     				$("div.login-warning").hide();
-                $.protocal.login(username, password, function(re) {
+                    $.protocal.login(username, password, function(re) {
           					if(re == "succ") {
           					    $(".m_login").html(username);
-                            window.localStorage.setItem("username",username);
-                            window.localStorage.setItem("fullname",username);
-                            window.localStorage.setItem("provider","Classic");
-                            window.localStorage.setItem("logid","-1");
+                            userCache.setItem("username",username);
+                            userCache.setItem("fullname",username);
+                            userCache.setItem("provider","Classic");
+                            userCache.setItem("logid","-1");
 
           			            $("#logout").show();
           			            window.guest = username;
@@ -167,6 +178,7 @@
           		});
     	    };
 
+            //when login successfully, add logout option, hide login
             var loginSuccessUI = function (username ){
 
                 $("#logout").show();
@@ -194,10 +206,11 @@
             };
     	    //clean cookie and clean up UI to guest mode
 	        var failLoginCleanUp = function(){
-                  window.localStorage.removeItem("username");
-                  window.localStorage.removeItem("fullname");
-                  window.localStorage.removeItem("provider");
-                  window.localStorage.removeItem("logid");
+	              console.log("delete user info");
+                  userCache.removeItem("username");
+                  userCache.removeItem("fullname");
+                  userCache.removeItem("provider");
+                  userCache.removeItem("logid");
                   $("#logout").hide();
                   window.guest = 'guest';
                   $("#login-box").hide();
@@ -226,8 +239,8 @@
                                     popup.close();
                                     if(window && window.hasOwnProperty("location")){
                                         //create cookie to jump start the login process after page refresh
-                                        window.localStorage.setItem("HybridAuthFirst","true");
-                                        window.localStorage.setItem("provider",provider);
+                                        window.sessionStorage.setItem("HybridAuthFirst","true");
+                                        userCache.setItem("provider",provider);
                                         window.location.reload();
                                     }
                              }
@@ -235,13 +248,17 @@
 
         /*-------------------------------------------------------*/
         //if this is a reload which happens when user login using social media
-        if(window.localStorage.getItem("HybridAuthFirst")=="true"){
-               //login & create localstorage cache
-               hybridAuthSecond(window.localStorage.getItem("provider"),true);
-               window.localStorage.removeItem("HybridAuthFirst");
-               loginSuccessUI(window.localStorage.getItem("username"));
+        if(window.sessionStorage.getItem("HybridAuthFirst")=="true"){
+               //login & create userCache cache
+               hybridAuthSecond(userCache.getItem("provider"),true);
+               window.sessionStorage.removeItem("HybridAuthFirst");
+               loginSuccessUI(userCache.getItem("username"));
         }else{
-           var username = window.localStorage.getItem("username");
+           console.log("restart app");
+           var username = userCache.getItem("username");
+           var provider = userCache.getItem("provider");
+           console.log("username"+username+userCache.length);
+
            if(username && username!=""){
               $(".login-btn").unbind("click");
               //Case 1. Classic Login
@@ -250,7 +267,7 @@
                     window.guest = username;
               }//end case 1.
               else{
-                    hybridAuthSecond(window.localStorage.getItem("provider"),false);
+                    hybridAuthSecond(userCache.getItem("provider"),false);
               }//end case 2
 
               loginSuccessUI(username);
@@ -321,5 +338,5 @@
 				$(".login-btn").show();
 				$(this).hide();
 		});
-	});
+	}
 })();

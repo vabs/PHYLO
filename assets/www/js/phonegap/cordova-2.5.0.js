@@ -4301,6 +4301,8 @@ module.exports = function(name, version, desc, size) {
         }
     }
     return storage.openDatabase(name, version, desc, size);
+
+	
 };
 
 
