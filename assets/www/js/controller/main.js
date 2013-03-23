@@ -48,7 +48,7 @@
 			},
 			'DNA/main.core' : {
 				//deps : ['jquery', 'jquery-ui','jquery-mobile','DNA/helper.core', 'DNA/timer.core','DNA/physics.engine',
-				deps : ['jquery', 'jquery-ui','DNA/helper.core', 'DNA/timer.core','DNA/physics.engine',
+				deps : ['jquery', 'jquery-ui','phonegap/cordova-2.5.0','DNA/helper.core', 'DNA/timer.core','DNA/physics.engine',
 					'DNA/endGame.theme','DNA/events.engine','DNA/engine.core','DNA/stage.core',
 					'DNA/sequence.core','DNA/splash.theme','DNA/tree.core','DNA/multiSelect.core',
 					'DNA/newick.core','DNA/lang.module','DNA/fitch.core','DNA/board.theme','DNA/highlighter.theme',

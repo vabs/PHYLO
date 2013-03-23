@@ -1,4 +1,5 @@
 (function(){
+    var userCache=window.localStorage;
 	$.endGame = {
 		//displays message of completing the game
 		complete : function() {
@@ -69,11 +70,11 @@
 		},
         // share highscore on social network
         share : function() {
-            if($.cookie.read("username")) {
-                var username = $.cookie.read("username");
-                var fullname = $.cookie.read("fullname");
-                var provider = $.cookie.read("loginmode");
-                var c_logid = $.cookie.read("logid");
+            if(userCache.getItem("username")) {
+                var username = userCache.getItem("username");
+                var fullname = userCache.getItem("fullname");
+                var provider = userCache.getItem("provider");
+                var c_logid = userCache.getItem("logid");
  
                 if ((provider=="Facebook")||(provider=="Twitter")||(provider=="LinkedIn")) {
   
@@ -154,10 +155,10 @@
             } else {
                 bootbox.alert(window.lang.body.social["field 29"]);
                 // delete cookie (just to be safe)
-                $.cookie.delete("username");
-                $.cookie.delete("fullname");
-                $.cookie.delete("loginmode");
-                $.cookie.delete("logid");
+                userCache.removeItem("username");
+                userCache.removeItem("fullname");
+                userCache.removeItem("provider");
+                userCache.removeItem("logid");
                 $("#logout").hide();
                 window.guest = 'guest';
                 $("#login-box").hide();

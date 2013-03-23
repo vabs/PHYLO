@@ -143,15 +143,16 @@
     				$("div.login-warning").hide();
                     $.protocal.login(username, password, function(re) {
           					if(re == "succ") {
-          					    $(".m_login").html(username);
-                            userCache.setItem("username",username);
-                            userCache.setItem("fullname",username);
-                            userCache.setItem("provider","Classic");
-                            userCache.setItem("logid","-1");
+          					    userCache.setItem("username",username);
+                                userCache.setItem("fullname",username);
+                                userCache.setItem("provider","Classic");
+                                userCache.setItem("logid","-1");
 
           			            $("#logout").show();
           			            window.guest = username;
-          			            $("#login-box").hide();
+          			            $("#tablet-login-box").hide();
+                                $("#tablet-login-box-bg").hide();
+                                $(".m_login").html(username);
           			            $(".login-btn").unbind("click");
           			            // show buttons. NB: hide expert button if necessary
           			            $.ajax({
@@ -182,7 +183,8 @@
             var loginSuccessUI = function (username ){
 
                 $("#logout").show();
-                $("#login-box").hide();
+                $("#tablet-login-box").hide();
+                $("#tablet-login-box-bg").hide();
                 $(".login-btn").unbind("click");
                 // show buttons. NB: hide expert button if necessary
                 //TODO connection checking
@@ -213,7 +215,8 @@
                   userCache.removeItem("logid");
                   $("#logout").hide();
                   window.guest = 'guest';
-                  $("#login-box").hide();
+                  $("#tablet-login-box").hide();
+                  $("#tablet-login-box-bg").hide();
                   $(".login-btn").click(function() { classicLogin(); });
                   $(".m_login").html(window.lang.body.play.gameselect.login["field 2"]);
                   $(".showInLogin").hide();
@@ -323,7 +326,8 @@
 							$(".m_login").html(name);
 							$("#logout").show();
 							window.guest = name;
-							$("#login-box").hide();
+							$("#tablet-login-box").hide();
+                    		$("#tablet-login-box-bg").hide();
 						} else {
 							$("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 22"]);
 						}

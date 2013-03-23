@@ -1,6 +1,7 @@
 /* this scripts generates the board features */
 (function() {
 	var doc = document, win = window;
+	var userCache = win.localStorage;
 	$.board = {
 		//generates the grid 
 		build : function() {
@@ -54,10 +55,10 @@
 			//volume control
 			$("#volumeOff").hide();
 			//cookie for music
-			if($.cookie.read("music-level")) {
+			if(userCache.getItem("music-level")) {
 				try {
-					document.getElementById("game-audio").volume = $.cookie.read("music-level");
-					if($.cookie.read("music-level") == 0) {
+					document.getElementById("game-audio").volume = userCache.getItem("music-level");
+					if(userCache.getItem("music-level") == 0) {
 						$("#volumeOn").hide();
 						$("#volumeOff").show();
 					} else {
@@ -68,13 +69,13 @@
 				}
 			} 
 			$("#volumeOn").unbind().click(function() {
-				$.cookie.create("music-level",0,365);
+				userCache.setItem("music-level",0,365);
 				document.getElementById("game-audio").volume=0;
 				$("#volumeOn").hide();
 				$("#volumeOff").show();
 			});
 			$("#volumeOff").unbind().click(function() {
-				$.cookie.create("music-level",1,365);
+                userCache.setItem("music-level",1,365);
 				document.getElementById("game-audio").volume=1;
 				$("#volumeOff").hide();
 				$("#volumeOn").show()
@@ -174,7 +175,7 @@
 			return '{"alignments" : '+str+']}';
 		},
 		//translates the grid color to its respected nucletide
-		convertColor : function(color) {
+		convertColor : function(nuc) {
 			if(color == "#71B2E2")
 				return "A";
 			if(color == "#9932CC")
