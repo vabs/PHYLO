@@ -19,6 +19,11 @@ html, body {
 	min-height:100%;
 }
 
+[class^="icon-"],
+[class*=" icon-"] {
+	background-image: none !important;
+}
+
 body {
 	/*background-color:#F1F1F1;
 	*/
@@ -49,7 +54,10 @@ body {
 	#tabletPanel {
 		display:none;	
 	}
-	.tablet-grid {
+    #tablet-grid-2 {
+              display:none;
+    }
+    .tablet-grid {
 		display:none;
 	}
 	#tabletSettingUp {
@@ -78,13 +86,13 @@ body {
 }
 
 #draw {
-	box-shadow: 0 6px 6px -6px #CCC;
-	-webkit-box-shadow: 0 6px 6px -6px #CCC;
-	-moz-box-shadow: 0 6px 6px -6px #CCC;
-	-o-box-shadow: 0 6px 6px -6px #CCC;
-	-ms-box-shadow: 0 6px 6px -6px #CCC;
-	-khtml-box-shadow: 0 6px 6px -6px #CCC;
-/*	background-color: #efefef;
+	box-shadow: 0 1px 1px #ccc;
+    -webkit-box-shadow:0 1px 1px #ccc;
+    -khtml-box-shadow:0 1px 1px #ccc;
+    -o-box-shadow:0 1px 1px #ccc;
+    -ms-box-shadow:0 1px 1px #ccc;
+    -ms-box-shadow:0 1px 1px #ccc;
+	/*	background-color: #efefef;
 	*/
 	background-color:white;
 	/*background: linear-gradient(-28deg, black 0%, #3D3D3D 95%);
@@ -229,6 +237,7 @@ a.btn {
 /* end of theme controller css */
 
 #game {
+    display:inline-block;
 	box-shadow: 0 6px 6px -6px #CCC;
 	-webkit-box-shadow: 0 6px 6px -6px #CCC;
 	-moz-box-shadow: 0 6px 6px -6px #CCC;
@@ -307,8 +316,8 @@ a.btn {
 
 #options-button i{
 	font-size:40px;
-	top:5px;
-	left:-10px;
+	top:-8px;
+    left:-20px;
 	position:relative;
 }
 #options {
@@ -486,11 +495,24 @@ a.btn {
 	-khtml-box-shadow: 0 6px 6px -6px #CCC;
 }
 
+.wrapper-inner::selection {
+	background: lightblue;
+}
+.wrapper-inner::-moz-selection {
+	background:lightblue;
+}
+
 .wrapper-inner {
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 	padding:50px 100px;
 	background-color:white;
 	text-align:left;
-	width:600px;
+	width:800px;
 	position:relative;
 	margin-left:auto;
 	margin-right:auto;
@@ -656,6 +678,17 @@ td.social-link {
 .language-list a div:hover {
 	background-color: #08C;
 	color:whitesmoke;
+}
+
+#language-tag {
+	min-width: 57px;
+}
+
+#language-tag i {
+	font-size: 30px;
+	top:-5px;
+	left:-10px;
+	position:relative;
 }
 
 .dropDownTriangle {

@@ -123,17 +123,18 @@
 	require(['yepnope'],
 		function() {
 			//loads tablet UX
-			var isTable = true;
-			yepnope({
+			window.isTablet = navigator.userAgent.match(/(iPad|Android .* Chrome\/[.0-9]* (?!Mobile)|Opera Tablet|Android .* (?!Mobile)|Tablet|silk|kindle fire)/i) != null;
+            yepnope({
 				test : isTablet,
 				yep : ['css/tablet.css','js/views/tablet.js'],
 				nope : ['css/media1280.css','css/media1180.css','css/media1024.css'],
 			});
 			//test mode script injection
-			yepnope({
+            yepnope({
 				test : window.DEV.enableTabletMode,
-				yep : 'css/tablet.css',
+				yep : 'css/tablet.css'
 			});
+
 		}
 	);
 
