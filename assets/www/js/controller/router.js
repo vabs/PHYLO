@@ -48,6 +48,9 @@
 					else if(dev == "IAMADEV+DEBUG") {
 						window.DEV.logging = true;
 						window.DEBUG = true;
+   				    } else if(dev == "NOMUSIC") {
+                        window.DEV.disableMusic = true;
+
 					}
 					
 				}
