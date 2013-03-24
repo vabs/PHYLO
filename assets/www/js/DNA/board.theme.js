@@ -3,19 +3,19 @@
 	var doc = document, win = window;
 	var userCache = win.localStorage;
 	$.board = {
-		//generates the grid 
+		//generates the grid
 		build : function() {
 			var str = "";
 			for(var i=0;i<$.phylo.rows;i++) {
 				str+="<div class='bgRow'>";
 				for(var j=0;j<$.phylo.seqLen;j++) {
-					str+="<div class='bgCell' style='left:"+$.sequence.calcPos(j)+"px'></div>";	
+					str+="<div class='bgCell' style='left:"+$.sequence.calcPos(j)+"px'></div>";
 				}
 				str+="</div>";
-			}				
+			}
 			$("#gameBoard").html("<div id='bg'>"+str+"</div>");
-			
-		},	
+
+		},
 		//updates and displays the score
 		score : function(x) {
 			$.phylo.currentScore = x;
@@ -26,7 +26,7 @@
 		bestScore : function(x) {
 			$("#bestScore").html("Best: "+ x);
 			if($.stage.current == $.stage.last) {
-				if(x > $.sequence.par) 
+				if(x > $.sequence.par)
 					$.protocal.sendHighScore();
 			}
 		},
@@ -46,7 +46,7 @@
 		startListener: function() {
 			var self = this;
 			//disables background music
-			if(window.DEV.disableMusic == false) {	
+			if(window.DEV.disableMusic == false) {
 				$("#musicPlayerSpot").html("<audio autoplay='autoplay' loop='loop' id='game-audio' preload='auto' autobuffer style='display:none'><source src='music/Valent%20-%20The%20Buckle.mp3' />Your browser does not support audio element</audio>");
 			}
 
@@ -67,7 +67,7 @@
 					}
 				} catch (err) {
 				}
-			} 
+			}
 			$("#volumeOn").unbind().click(function() {
 				userCache.setItem("music-level",0,365);
 				document.getElementById("game-audio").volume=0;
@@ -84,18 +84,18 @@
 			$("#cycle").unbind().click(function(){
 				$.helper.copy($.sequence.track, $.phylo.bestTrack);
 				//$.sequence.track = $.phylo.bestTrack.slice(0);
-				
+
 				var score = $.fitch.score();
 				$.board.score(score);
 				$.physics.snapRandom();
 				if($.phylo.bestScore >= $.sequence.par)
 					$.board.approve();
 				self.stats();
-				
+
 			});
 			//next stage
 			$("#star").unbind().click(function(){
-				if($.phylo.currentScore >= $.sequence.par) 
+				if($.phylo.currentScore >= $.sequence.par)
 					$.stage.round();
 			});
 			//new scoring
@@ -111,42 +111,42 @@
 				if($.phylo.currentScore < $.sequence.par) {
 					self.unapprove();
 					return;
-				} 
+				}
 				$("#star").animate({
 					opacity: 0.2
 				},300,function() {
 					if($.phylo.currentScore < $.sequence.par) {
 						self.unapprove();
 						return;
-					} 
+					}
 					$("#star").animate({
 						opacity: 1
 					},500,function() {
 						if($.phylo.currentScore < $.sequence.par) {
 							self.unapprove();
 							return;
-						} 
+						}
 						$("#star").animate({
 							opacity: 0.2
 						},300,function() {
 							if($.phylo.currentScore < $.sequence.par) {
 								self.unapprove();
 								return;
-							} 
+							}
 							$("#star").animate({
 								opacity: 1
 							},500,function(){
 								if($.phylo.currentScore < $.sequence.par) {
 									self.unapprove();
 									return;
-								} 
-							});	
-						});	
+								}
+							});
+						});
 					});
 				});
 			});
 		},
-		//tinkers the css on the star 
+		//tinkers the css on the star
 		unapprove : function() {
 			$("#star").removeClass("pass");
 			$("#star").css({
@@ -166,7 +166,7 @@
 					else if(i!=0 && track[i][j] == 0)
 						str+="";
 					else
-						str+=self.convertColor($("#"+track[i][j]).css("backgroundColor"));
+						str+=self.convertColor($("#"+track[i][j]));
 				}
 				str+='"}';
 				if(i<track.length-2)
@@ -176,6 +176,7 @@
 		},
 		//translates the grid color to its respected nucletide
 		convertColor : function(nuc) {
+                    console.log("LOG_D_board.theme: nuc");
         			if(nuc.hasClass("nuc-G"))
         				return "G";
         			if(nuc.hasClass("nuc-C"))
@@ -204,12 +205,12 @@
 				return "A";
 			if(color == $(".nuc-G").css("backgroundColor"))
 				return "G";
-			if(color == $(".nuc-C").css("backgroundColor"))	
+			if(color == $(".nuc-C").css("backgroundColor"))
 				return "C";
 			if(color == $(".nuc-T").css("backgroundColor"))
 				return "T";
 		    */
 			return null;
 		},
-	};	
+	};
 })();
