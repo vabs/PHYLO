@@ -1,0 +1,19 @@
+
+<!-- saved from url=(0083)https://raw.github.com/McGill-CSB/PHYLO/master/js/models/dataTable/datatable_KO.txt -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">{
+	"sProcessing":   "처리...",
+	"sLengthMenu":   "_MENU_ 항목을 표시",
+	"sZeroRecords":  "일치하는 레코드를 찾을 수 없습니다",
+	"sInfo":         "_TOTAL_ 항목의 _END_에 _START_보기",
+	"sInfoEmpty":    "0 항목 0-0보기",
+	"sInfoFiltered": "(_MAX_ 총 항목에서 제외)",
+	"sInfoPostFix":  "",
+	"sSearch":       "검색 :",
+	"sUrl":          "",
+	"oPaginate": {
+		"sFirst":    "&lt;b&gt;처음으로&lt;/b&gt;",
+		"sPrevious": "이전",
+		"sNext":     "다음",
+		"sLast":     "마지막"
+	}
+}</pre></body></html>

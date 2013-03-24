@@ -176,7 +176,15 @@
 		},
 		//translates the grid color to its respected nucletide
 		convertColor : function(nuc) {
-			if(color == "#71B2E2")
+        			if(nuc.hasClass("nuc-G"))
+        				return "G";
+        			if(nuc.hasClass("nuc-C"))
+        				return "C";
+        			if(nuc.hasClass("nuc-A"))
+        				return "A";
+        			if(nuc.hasClass("nuc-T"))
+        				return "T";
+        	/*if(color == "#71B2E2")
 				return "A";
 			if(color == "#9932CC")
 				return "G";
@@ -200,6 +208,7 @@
 				return "C";
 			if(color == $(".nuc-T").css("backgroundColor"))
 				return "T";
+		    */
 			return null;
 		},
 	};	
