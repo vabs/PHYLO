@@ -69,9 +69,6 @@
 			'jquery.dataTables' : {
 				deps : ['jquery','jquery-ui'],
 			},
-			'views/detectIE.actions' :  {
-				deps : ['jquery','DNA/helper.core']
-			},		
 			'bootbox' : {
 				deps : ['jquery','bootstrap'],
 			},
@@ -148,9 +145,10 @@
 		Router.init();
 	});
 
+
+    require(['DNA/helper.core']);
 	require(['jquery.notify']);
 	require(['dev/devTools']);
-	require(['views/detectIE.actions']);
 	require(['bootstrap']);
 	require(['views/customizeGame.actions']);
 	require(['bootbox']);

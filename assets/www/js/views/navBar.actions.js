@@ -49,36 +49,7 @@
 			$(this).addClass("logo-OnSelect");
 		}); */
 
-		$("#login").click(function(event) {
-			event.stopPropagation();
-			if(window.guest != "guest") {
-			//if($("#login-tag").html().search(/Welcome/) > -1) {
-	
-			} else {
-				$("#login-box").show();
-				$("#login-box").css("display","inline-block");
-				$(this).addClass("login-OnSelect");
-				
-				$("#option-list").hide();
-				$("#options-button .dropDownTriangle").hide();
-				$("#options-button").removeClass("dropDown-OnSelect");
-				
-				$("#language-list").hide();
-				$("#language").removeClass("dropDown-OptionOnSelect");
-				$(".dropDownTriangle").hide();
-			}
 
-		}).hover(function() {
-			//if($("#login-tag").html().search(/Welcome/) < 0) {
-			if(window.guest == "guest") {
-				$(this).addClass("login-OnSelect");
-			}	
-		}, function() {
-			if($("#login-box").css("display") == "none") {
-				$(this).removeClass("login-OnSelect");
-			}
-		});
-		
 		$("#logout").mouseover(function() {
 			$("#language-list").hide();
 			$("#language").removeClass("dropDown-OptionOnSelect");
