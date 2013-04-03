@@ -1,7 +1,20 @@
 (function() {
-	var doc = document, win = window;
-	var url = "http://phylo.cs.mcgill.ca/phpdb/phyloExpertDB.php"
-	$.protocal = {
+
+    var doc = document, win = window;
+    var url = "http://phylo.cs.mcgill.ca/phpdb/phyloExpertDB.php"
+
+    $.protocal = {
+	    //check for connection
+	    checkConnection : function(){
+            var networkState = navigator.connection.type;
+            if(networkState===Connection.NONE){
+                console.log("LOG_protocal.core: no internet connection detected");
+                return false;
+            }
+            else
+               return networkState;
+        }
+        ,
 		//for login
 		login : function(username, password, fn) {
 			var mode = 7;
@@ -258,7 +271,8 @@
 				var tree = $.newick.parse(j.tree); 
 				$.phylo.get.tree = tree;
 				$.main.callBack();
-			});
-		},
-	};
+			    });
+		    },
+	    };
+
 })();

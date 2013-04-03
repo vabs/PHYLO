@@ -55,7 +55,7 @@
 					'DNA/protocal.core','DNA/score.theme','views/customizeGame.actions'],	
 			},
 			'DNA/protocal.core' : {
-				deps : ['jquery'],
+				deps : ['jquery','phonegap/cordova-2.5.0'],
 			},
 			'RNA/stage.ext' : {
 				deps : ['jquery','DNA/stage.core'],

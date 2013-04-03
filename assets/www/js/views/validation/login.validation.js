@@ -1,7 +1,7 @@
 (function() {
 	$(document).ready(function() {
 		//hide logout on default
-		$("#logout").hide();
+        $("#logout").hide();
         document.addEventListener("deviceready", onDeviceReady,false);
     });
 
@@ -12,7 +12,17 @@
         //update/create localstorage key/value from hybrdiauth
         var hybridAuthSecond = function(provider,reload){
                       var url="http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/login.php?provider="+provider+"&restart=0";
-                      //TODO, connection check
+                      window.connectStatus=$.protocal.checkConnection();
+                      if(window.connectStatus === false){
+                        console.log("cannot detect connection");
+                        //show warning
+                        var warning = "<p>You are not connected to internet, we cannot verify your account at this time.</p>";
+                        $("#tablet-warning-box_p").html(warning);;
+                        $("#tablet-warning-box-bg").trigger("ev_tablet_warning");
+                        failLoginCleanUp();
+                        return;
+                      }
+
                       console.log("hybridAuthSecond,reload:"+reload);
                       $.ajax({
                         type: 'GET',
@@ -257,10 +267,11 @@
                window.sessionStorage.removeItem("HybridAuthFirst");
                loginSuccessUI(userCache.getItem("username"));
         }else{
+
            console.log("restart app");
            var username = userCache.getItem("username");
            var provider = userCache.getItem("provider");
-           console.log("username"+username+userCache.length);
+           //console.log("username"+username+userCache.length);
 
            if(username && username!=""){
               $(".login-btn").unbind("click");

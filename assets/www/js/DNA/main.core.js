@@ -1,10 +1,4 @@
 (function() {
-	$(document).ready(function() {
-         document.addEventListener("deviceready", onDeviceReady_main,false);
-	});//end ready, execute only on cordova's device ready
-
-    function onDeviceReady_main(){
-        console.log("LOG_main.core: deviceready received");
 		$.main = {
 			type : "DNA",
 			//unbinds all the previous data
@@ -127,5 +121,4 @@
 		};
 
 	//	$.main.init();
-	}
 })();
