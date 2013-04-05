@@ -8,7 +8,7 @@
             //moved hash to be outside so it can be used in all cases
             var hash;
             try {
-                hash = $.helper.get("lang").toString().toUpperCase().replace(/!.*/,"");			
+                hash = $.helper.get("lang").toString().toUpperCase().replace(/!.*/,"");
             } catch(err) {
                 hash = "EN";
             }	

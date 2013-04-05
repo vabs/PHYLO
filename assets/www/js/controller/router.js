@@ -36,7 +36,12 @@
 		var init = function() {
 			require(['views/navBar.actions']);
 			//set default lang
-			window.langOpt = "EN";
+			var oldLang=window.localStorage.getItem("Phylolang");
+            if(!oldLang){
+              window.langOpt= "EN";
+			}else{
+               window.langOpt=oldLang;
+			}
 			//initalize
 			var navBar = new NavBar;
 			navBar.init();
@@ -55,7 +60,7 @@
 					
 				}
 				if(lang == undefined) {
-					lang = "EN";
+                    lang= window.langOpt;
 				} else lang.toUpperCase();
 				navBar.set(lang,"play");
 				var playView = new Views.Play;
@@ -64,7 +69,7 @@
 
 			route.on('route:puzzle',function(lang, id) {
 				if(lang == undefined) {
-					lang = "EN";
+                    lang= window.langOpt;
 				} else lang.toUpperCase();
 				navBar.set(lang, "play");
 				var playView = new Views.Play;
@@ -73,7 +78,7 @@
 		
 			route.on('route:rna',function(lang) {
 				if(lang == undefined) {
-					lang = "EN";
+                    lang= window.langOpt;
 				} else lang.toUpperCase();
 				navBar.set(lang, "play");
 				var rnaView = new Views.RNA;
@@ -82,7 +87,7 @@
 
 			route.on('route:tutorial', function(lang) {
 				if(lang == undefined) {
-					lang = "EN";
+                    lang= window.langOpt;
 				} else lang.toUpperCase();
 				navBar.set(lang,"tutorial");
 				var tutorialModel = new Models.Tutorial({lang:lang});
@@ -94,7 +99,7 @@
 
 			route.on('route:history', function(lang) {
 				if(lang == undefined) {
-					lang = "EN";
+                    lang= window.langOpt;
 				} else lang.toUpperCase();
 				navBar.set(lang,"history");
 				var historyView = new Views.History;	
@@ -103,7 +108,7 @@
 		
 			route.on('route:about', function(lang) {
 				if(lang == undefined) {
-					lang = "EN";
+                    lang= window.langOpt;
 				} else lang.toUpperCase();
 				navBar.set(lang,"about");
 				var aboutView = new Views.About;
@@ -112,7 +117,7 @@
 
 			route.on('route:credits', function(lang) {
 				if(lang == undefined) {
-					lang = "EN";
+                    lang= window.langOpt;
 				} else lang.toUpperCase();
 				navBar.set(lang,"credits");
 				var creditsView = new Views.Credits;
@@ -121,7 +126,7 @@
 
 			route.on('route:ranking', function(lang) {
 				if(lang == undefined) {
-					lang = "EN";
+                    lang= window.langOpt;
 				} else lang.toUpperCase();
 				navBar.set(lang,"ranking");
 				var rankingView = new Views.Ranking;
@@ -138,8 +143,10 @@
 
 			route.on('route:tabletSettings', function(lang) {
 				if(lang == undefined) {
-					lang = "EN";
+                    lang= window.langOpt;
 				} else lang.toUpperCase();
+				window.localStorage.setItem("Phylolang",lang);
+				console.log("route:"+window.localStorage.getItem("Phylolang"));
 				navBar.set(lang,"play");
 				var tabletSettingsView = new Views.TabletSettings;
 				tabletSettingsView.render(lang);	
@@ -147,7 +154,7 @@
 			
 			route.on('route:anotherDefaultRoute', function(lang) {
 				if(lang == undefined) {
-					lang = "EN";
+                    lang= window.langOpt;
 				} else lang.toUpperCase();
 				navBar.set(lang,"play");
 				var playView = new Views.Play;
@@ -155,7 +162,8 @@
 			});
 
 			route.on('route:defaultRoute', function(lang) {
-				var lang = "EN";
+				var lang = window.localStorage.getItem("Phylolang");
+				if(!lang)lang="EN";
 				var playView = new Views.Play;
 				navBar.set(lang,"play");
 				playView.render(lang);

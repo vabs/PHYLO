@@ -46,16 +46,6 @@
                     this.db = window.openDatabase(this.dbname, this.version,
                                              this.dbDisplay,  4 * 1024 * 1024);
                }//test
-                self.db.transaction(function(tx){
-                     tx.executeSql("SELECT * FROM Levels where level_id=?", [2],function(tx,results){
-                     var len = results.rows.length;
-                     console.log("Levels table: " + len + " rows found.");
-                     for (var i=0; i<len; i++){
-                            console.log("Row = " + i + " ID = " + results.rows.item(i).level_id + " Data =  " + results.rows.item(i).level_xml);
-                     }
-                     },self.errorDB);
-                },self.errorDB);
-
 		   }
 
 		},
@@ -102,12 +92,21 @@
 
         },
 
-        queryPuzzle: function(){
+        queryPuzzle: function(puzzleOpts){
+            //{level_id:,difficulty:,disease}
 
+        /*self.db.transaction(function(tx){
+                             tx.executeSql("SELECT * FROM Levels where level_id=?", [1220],function(tx,results){
+                             var len = results.rows.length;
+                             console.log("Levels table: " + len + " rows found.");
+                             for (var i=0; i<len; i++){
+                                    console.log("Row = " + i + " ID = " + results.rows.item(i).level_id + " Data =  " + results.rows.item(i).level_xml);
+                             }
+                             },self.errorDB);
+                        },self.errorDB);*/
 		},
         //update file storage of puzzle
 		updatePuzzle:function(){
-
 		},
 
 	};

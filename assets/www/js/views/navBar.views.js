@@ -16,7 +16,7 @@
 			init : function() {
 				this.desktopNavBar = $("#nav").html();
 				this.tabletUX = $("#tablet-grid").html();
-				this.set,("EN","play");
+				this.set,(window.langOpt,"play");
 			},
 			lang : "null",
 			//sets stuff
@@ -28,6 +28,7 @@
 				//request and check if file exists if not load in the file
 				request.getJsonLang(lang, function(json) {
 					//sets the lang defintion
+                    console.log("request"+lang);
 					window.lang = json;
 					//loads out the translation
 					$("#tablet-grid").html(Mustache.render(self.tabletUX,json));
@@ -36,7 +37,7 @@
 					//update login tag
 					translate.set(json);
 					if(window.guest != "guest") {
-						$("m_login").html(window.guest.replace(/\+/," "));
+					    $(".m_login").html(window.guest);
 					}
 					self.addTriggers(lang,json);
 					$("#"+tag +" div").addClass("onSelect");

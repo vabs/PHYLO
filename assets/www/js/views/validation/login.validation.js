@@ -133,9 +133,9 @@
                                              }
                                       });//end ajax request to phylo+ fail callback
                                       //dispaly logined user on toolbar and set global variable
-                                      $(".m_login").html(fullname.replace("+"," "));
-                                      window.guest=fullname;
-                                                            
+                                      window.guest=fullname.replace("+"," ");
+                                      $(".m_login").html(window.guest);
+
                                 }else{
                                     $("div.login-warning").show().html(window.lang.body.social["field 6"].replace("***",provider));
                                     failLoginCleanUp();
