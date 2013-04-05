@@ -87,7 +87,9 @@
 			'DNA/lang.module' : {
 				deps : ['jquery'],
 			},
-
+            'phonegap/storage.phonegap':{
+                deps:['jquery','bootstrap','phonegap/cordova-2.5.0']
+            },
 			'validation/login.validation' : {
 				deps : ['jquery','phonegap/cordova-2.5.0','DNA/protocal.core'],
 			},
@@ -104,7 +106,7 @@
 				deps : ['views/request.views','views/variable.listener'],
 			},	
 			'views/navBar.views' : {
-				deps : ['jquery','underscore', 'backbone','DNA/timer.core','views/lang.views'],
+				deps : ['jquery','underscore', 'backbone','phonegap/storage.phonegap','DNA/timer.core','views/lang.views'],
 			},
 			'controller/router' : {
 				deps : ['jquery','underscore','backbone','views/site.views','views/navBar.views'],

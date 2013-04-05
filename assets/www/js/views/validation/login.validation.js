@@ -16,10 +16,17 @@
                       if(window.connectStatus === false){
                         console.log("cannot detect connection");
                         //show warning
-                        var warning = "<p>You are not connected to internet, we cannot verify your account at this time.</p>";
-                        $("#tablet-warning-box_p").html(warning);;
-                        $("#tablet-warning-box-bg").trigger("ev_tablet_warning");
-                        failLoginCleanUp();
+                        bootbox.dialog(window.lang.body.misc["field 25"],[{
+                                             "label" : "Retry",
+                                             "class" : "btn-primary",
+                                             "callback": function() {
+                                                  $("#tablet-login-tag").trigger('click');
+                                             }
+                                         },
+                                         {   "label" : "Cancel",
+                                             "class" : "btn-danger"
+                         }]);
+                         failLoginCleanUp();
                         return;
                       }
 

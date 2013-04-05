@@ -27,7 +27,7 @@
 	"body": {
 		"misc" : {
 			"field 1":"Contribute",
-			"field 2":"Setting Up! One moment please.",
+			"field 2":"Setting up puzzles! One moment please.",
 			"field 3":"Leave a Feedback",
 			"field 4":"View on",
 			"field 5" : "Email",
@@ -50,7 +50,8 @@
 			"field 22" : "Share with your friends",
 			"field 23" : "DNA Puzzles",
 			"field 24" : "Learn More",
-		},
+		    "field 25" : "You are not connected to Internet. We cannot verify your account at this time",
+            },
 		"play": {
 			"gameselect": {
 				"login": {

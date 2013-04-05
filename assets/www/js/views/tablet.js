@@ -6,9 +6,6 @@
 			width : $(document).width()
 		});
 
-		$("#tablet-warning-template").css({
-			width : $(document).width()
-		});
 
 		var content = $("#login-box").html();
 		$("#login-box").html("");
@@ -19,10 +16,18 @@
 		   window.connectStatus=$.protocal.checkConnection();
            if(window.connectStatus === false){
                  console.log("cannot detect connection");
-                 //show warning
-                 var warning = "You are not connected to internet, we cannot verify your account at this time.";
-                 $("#tablet-warning-box_p").html(warning);;
-                 $("#tablet-warning-box-bg").trigger("ev_tablet_warning");
+                 //show warning: TODO, maybe allow regitration or some sudo-account for the tablet user
+                 bootbox.dialog(window.lang.body.misc["field 25"],
+                 [{
+                     "label" : "Retry",
+                     "class" : "btn-primary",
+                     "callback": function() {
+                          $("#tablet-login-tag").trigger('click');
+                     }
+                 },
+                 {   "label" : "Cancel",
+                     "class" : "btn-danger"
+                 }]);
            }
            else{
 			    if(window.guest == "guest") {
@@ -46,20 +51,6 @@
 			$("#tablet-login-box").hide();
 		});
 
-        //hide warning
-        $("#tablet-warning-box_cancel").click(function(){
-    	    	$("#tablet-warning-box-bg").hide();
-    			$("#tablet-warning-box").hide();
-        });
 
-        //trigger event
-        $("#tablet-warning-box-bg").on("ev_tablet_warning", function(event){
-                 $("#tablet-warning-box-bg").css({
-                    	height: $(document).height(),
-                    	width : $(document).width()
-                 }).show();
-                 $("#tablet-warning-box_cancel").show();
-                 $("#tablet-warning-box").show();
-        });
 	});
 })();

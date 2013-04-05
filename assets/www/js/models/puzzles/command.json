@@ -1,0 +1,10 @@
+{
+    "createTable":{
+        "drop 1":"DROP TABLE IF EXISTS Levels",
+        "drop 2":"DROP TABLE IF EXISTS Solutions",
+        "create 1":"CREATE TABLE IF NOT EXISTS Levels (level_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,block_id INTEGER,difficulty INTEGER,level_xml varchar(1500),location_offset INTEGER,end_offset INTEGER,play_count INTEGER,fail_count INTEGER,best_score INTEGER,original_score INTEGER,running_score INTEGER, disease_link varchar(100),disease_category varchar(100),highscore_user varchar(60),bio_off INTEGER NOT NULL,block_id_temp INTEGER NOT NULL)",
+        "create 2":"CREATE TABLE IF NOT EXISTS Solutions (level_id INTEGER NOT NULL,player_id varchar(50),uploaded BOOLEAN NOT NULL DEFAULT FALSE,PRIMARY KEY(level_id,player_id))"
+    }
+
+
+}

@@ -30,13 +30,11 @@
 					//sets the lang defintion
 					window.lang = json;
 					//loads out the translation
-					$("#nav").html(Mustache.render(self.desktopNavBar,json)).show();;
 					$("#tablet-grid").html(Mustache.render(self.tabletUX,json));
-
-					$("#tablet-grid-2").hide();
+                    $("#tablet-grid-2").hide();
                     $("#tablet-grid").show();
+					//update login tag
 					translate.set(json);
-					//update login tagg too
 					if(window.guest != "guest") {
 						$("m_login").html(window.guest.replace(/\+/," "));
 					}
@@ -47,6 +45,10 @@
 						$(".showInLogin").show();
 					if(window.showExpertOptions != undefined && window.showExpertOptions == true)
 						$(".showExpertOptions").show();
+
+
+				    //initialize puzzle, once we get the translated lang
+				    $.storage.init("1.0");
 				});
 			},
 			//this is to set / reset the event triggers
