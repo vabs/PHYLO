@@ -70,14 +70,12 @@
                       .done(function(data){
                            var lines = data.split("\n");
                            $.each(lines,function(n,elem){
-                               var query='INSERT INTO Levels VALUES '+elem;
-                               //console.log(query);
+                               var query=self.commands.createTable["insert 1"]+elem;
                                self.db.transaction( function (tx){
                                     tx.executeSql(query);
                                     var progress=Math.floor((n/lines.length*(100-5))+5).toString();
                                     $('.bar').css({width:progress+"%"});
                                     if(n==lines.length-1){
-                                        console.log(lines.length);
                                         userCache.setItem("puzzleDB_name",self.dbname);
                                         userCache.setItem("puzzleDB_version",self.version);
                                         bootbox.hideAll();
@@ -105,60 +103,93 @@
             if(type == "random") {
                 self.request+= "mode=1&diff="+score;
                 query+="difficulty=?";
-
-                console.log(query);
                 self.db.transaction(function(tx){
-                    tx.executeSql(query,[score],self.queryRandom,self.errorDB);
+                    tx.executeSql(query,[score],self.querySuccess,self.errorDB);
+                },self.errorDB);
+
+
+            } else if(type == "level") {
+                console.log("received request");
+                self.request+= "mode=2&id="+score;
+                query+="level_id=?"
+                self.db.transaction(function(tx){
+                    tx.executeSql(query,[score],self.querySuccess,self.errorDB);
                 },self.errorDB);
 
             } else if(type == "disease") {
                 self.request+= "mode=2&id="+score;
-                query+="level_id=?"
-
-                self.db.transaction(function(tx){
-                    tx.executeSql(query,[score],function(tx,results){
-                        var len = results.rows.length;
-
-                        //$.protocal.request();
-
-                    },self.errorDB);
-                },self.errorDB);
-
-            } else if(type == "level") {
-                self.request+= "mode=2&id="+score;
-                query+="level_id=?"
-
-                self.db.transaction(function(tx){
-                    tx.executeSql(query,[score],function(tx,results){
-                        var len = results.rows.length;
-
-                        //$.protocal.request();
-
-                    },self.errorDB);
-                },self.errorDB);
-
+                //query different....TODO
             }
         },
 
-        queryRandom:function(tx,results){
+        querySuccess:function(tx,results){
+            var self = $.storage;
             var len = results.rows.length;
+            var index = ($.protocal.tp=="level_id")?0:Math.floor((Math.random()*results.rows.length));
             if(len>=1){
-                var puzzle = results.rows.item(Math.floor((Math.random()*results.rows.length)));
-                puzzle.json= $.xml2json(puzzle.level_xml);
-                console.log(puzzle.json);
+                var puzzle = results.rows.item(index);
+                if(puzzle.in_XML=="true"){
+                    puzzle.json= $.xml2json(puzzle.level_xml);
+                }else{
+                    puzzle.json= $.parseJson(puzzle.level_xml);
+                }
+                    self.processPuzzleJson(puzzle.json);
 
             }else{
-                if($.protocal.checkConnection()){
-                    $.protocal.request();
+                if($.protocal.checkConnection()!=false){
+                    if(DEV.logging) {
+                        devTools.prompts.notify({title : "LOG_Storage", text :"cannot find in local puzzle,requesting:"+ $.storage.request});
+                    }
+                    $.protocal.request(self.request);
                 }else{
                     //pick from local
+                    self.getLocalPuzzle();
                 }
             }
         },
 
 
-        //update file storage of puzzle
-		updatePuzzle:function(){
+        //processPuzzleJson from boh request and local
+        processPuzzleJson:function(json){
+            $.phylo.id = json.id;
+            for(var i =0;i<json.sequence.length;i++) {
+                json.sequence[i] = (json.sequence[i].replace(/-/g,"_")).toUpperCase();
+            }
+            //Detect backend error
+            var numOfSeq = json.sequence.length;
+            var numOfNodes = json.tree.replace(/(\(|\)|\;)/,"").split(",").length;
+
+            if(DEV.logging) {
+                devTools.prompts.notify({ title : "Puzzle Id", text : $.phylo.id});
+            }
+            if(numOfSeq != numOfNodes) {
+                console.log(">> Detected Error -> Puzzle ("+$.phylo.id+") Sequence given ("+numOfSeq+") != phylo tree nodes ("+numOfNodes+")");
+                if(DEV.logging)
+                    devTools.prompts.notify({ type:"error", title:"warning", text: "Puzzle: "+$.phylo.id +"<br> #Seq("+numOfSeq+") / #Nodes("+numOfNodes+") mismatch"});
+            }
+            if(DEBUG) {
+                json.sequence;
+                json.tree;
+            }
+            $.phylo.get = {};
+            $.phylo.get.sequence = json.sequence;
+            $.phylo.get.treeString = json.tree;
+            var tree = $.newick.parse(json.tree);
+            $.phylo.get.tree = tree;
+            $.main.callBack();
+        },
+
+        //TODO pick a random local puzzle when both local and request failed --> should probably notify user
+        getLocalPuzzle:function(){
+           /* self.db.transaction(function(tx){
+                tx.executeSql(query,[score],self.queryRandom,self.errorDB);
+            },self.errorDB);
+           */
+        },
+
+        //add new json puzzle to storage
+		updatePuzzle:function(json){
+
 		},
 
 	};

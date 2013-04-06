@@ -158,6 +158,7 @@
 		},
 
         request : function(str) {
+
 			$.ajax({
 				url : url,
 				data : str,
@@ -174,91 +175,20 @@
 						console.log(err);
 					return;
 				}
-				$.phylo.id = j.attributes.id;
-				for(var i =0;i<j.sequence.length;i++) {
-					j.sequence[i] = (j.sequence[i].replace(/-/g,"_")).toUpperCase();
-				}	
-				//Detect backend error
-				var numOfSeq = j.sequence.length;
-				var numOfNodes = j.tree.replace(/(\(|\)|\;)/,"").split(",").length;
-
-				if(DEV.logging) {
-					devTools.prompts.notify({ title : "Puzzle Id", text : $.phylo.id});
-				}
-
-				if(numOfSeq != numOfNodes) {
-					console.log(">> Detected Error -> Puzzle ("+$.phylo.id+") Sequence given ("+numOfSeq+") != phylo tree nodes ("+numOfNodes+")");
-					if(DEV.logging)	
-						devTools.prompts.notify({ type:"error", title:"warning", text: "Puzzle: "+$.phylo.id +"<br> #Seq("+numOfSeq+") / #Nodes("+numOfNodes+") mismatch"});
-				}
-			
-
-				$.phylo.get = {};
-				$.phylo.get.sequence = j.sequence;
-				
-				if(DEBUG) {
-					j.sequence;
-					j.tree;
-				}
-				$.phylo.get.treeString = j.tree;
-				var tree = $.newick.parse(j.tree); 
-				$.phylo.get.tree = tree;
-				$.main.callBack();
-
+                //
+                $.storage.updatePuzzle(j)
+                $.storage.processPuzzleJson(j);
 			}).fail(function() {
-			/* this part runs the dummy data */
-			//	var dummy = '{"level":{"attributes":{"id":"3071"},"sequence":["-----GAGGATCCAGC-----","-----GAGGCTCAAGC-----","TTTTGAAAACTAGATA-----","-----GGAGTCTAAAA-----","-----AGGCGCTAAAAACAAA","------GGAACTCCAA-----","-----AGGGCGAAAAC-----","-----AGGCTCCAATG-----"],"tree":"((((hg19,rheMac2),mm9),(bosTau4,(canFam2,pteVam1))),(loxAfr3,dasNov2));"}}';
-				//var dummy = '{"level":{"attributes":{"id":"1926"},"sequence":["---agagtgactcccag----","----gagagatatagag----","---GGGTGAAGGGGTGG----","-TCGAGATTCCCCCGAAGACA","---agagtgacccccag----"],"tree":"((((hg19,rheMac2),mm9),canFam2),loxAfr3);"}} ';
-				//var dummy = '{"level":{"attributes":{"id":"1462"},"sequence":["CCTT-CGAAG-----TAAGAA","CCTT-CGAAG-----TGAGAA","CCC--TGGTG-----TAAGAT","GAGG-CAGGC-----------","gcag-cgggc---agcgggcg"],"tree":"(((hg19,rheMac2),mm9),(bosTau4,canFam2));"}}';
-				//var dummy = '{"level":{"attributes":{"id":"1354"},"sequence":["CAGA-------------TGCG","CGGG-------------AG--","GGGTTCCAccccgcccccggg","GGGG-------------CGGG","GGCC-------------TACG","--GC-------------TTGG"],"tree":"(((hg19,mm9),(canFam2,pteVam1)),(loxAfr3,dasNov2));"}}';
-				//var dummy = '{"level":{"attributes":{"id":"172"},"sequence":["----AGCGG---GG---AGTG","----TGAGA---GG---TGTA","----GGTGG---AG-------","----GAAAG---AG---CGAG","----GGGGA---TG---CGGG","GGGACCCCG---GG---AGGC","GGGTCCCAG---AG-------"],"tree":"(((hg19,mm9),(bosTau4,(canFam2,pteVam1))),(loxAfr3,dasNov2));"}}';
-				//var dummy = '{"level":{"attributes":{"id":"513"},"sequence":["------CTC-ATGCAGTGAAA","------CCC-ATGCAG-----","------GCT-CCGAGG-----","-AGCTCTCT-GCCGGG-----"],"tree":"(((hg19,rheMac2),mm9),loxAfr3);"}}';
-				//var dummy = '{"level":{"attributes":{"id":"1505"},"sequence":["---TCC----CAG-----CTG","CCCTCC----CAA-----CTC","---CCT----CAGCGGGCCC-","-----------------AGCC","---Tctgccctcacggaacac"],"tree":"(((hg19,rheMac2),(bosTau4,canFam2)),loxAfr3);"}}';
-				//var dummy = '{"level":{"attributes":{"id":"3394"},"sequence":["----A-----------CTTCT","----A-----------CTTCT","----G----AGTGGGCCTGGG","----GTACCTGCGCGTCCAGG"],"tree":"((hg19,rheMac2),(bosTau4,canFam2));"}}';
-				//var dummy = '{"level":{"attributes":{"id":"18"},"sequence":["cggcgcgcgccg---------","tggtgtgtgtgt---------","AGCCGCCAGCGC---------","AGGAGCCCATCT---------","TTGGGC-CTCTC---------","gTGCGCGCACTC---------","ACACACACACGCAGGgggagg"],"tree":"(((hg19,(galGal3,taeGut1)),xenTro2),((tetNig2,fr2),gasAcu1));"}}';
-				//var dummy = '{"level":{"attributes":{"id":"4010"},"sequence":["ggcgccccAG-----------","---GATCTGG-----------","----ACCCAC-----------","----CAAGTG-----------","---GGTTAGG-----------","ggcgccccAG-----------"],"tree":"((((hg19,rheMac2),mm9),(canFam2,pteVam1)),loxAfr3);"}}';
-				//var dummy = '{"level":{"attributes":{"id":"114"},"sequence":["----------TTATTTTT-A","----------TTATTTTT-A","----------TTATTTTT-G","----------TTATTTTT-A","CTGCAAGTGGTTATTTGTAA","CTATACATGATTTTTAAA-A","CTATAA----ATGCTTTT-G"],"tree":"((((((hg19,panTro2),ponAbe2),rheMac2),micMur1),oryCun2),bosTau4);"}}';
-				var dummy = '{"level":{"attributes":{"id":"400"},"sequence":["-TGGGG--ATCCAGCATGAG","-TGGGG--ATCCAGCATGAG","----------------CAGG","----------------GGAG","-TGAGG--ATCCACCCTGAG","TCGAGG--ATCCAACATGAG","--GAGG--GTCCGGCATGAG","-CGAGG--GGTCAGCGGGAG"],"tree":"(((hg19,rheMac2),(mm9,oryCun2)),(bosTau4,(equCab2,(felCat3,canFam2))));"}}';
-
-
-				console.log(">> Cannnot connect to database");
-				console.log(">> loading dummy data");
-				if(DEV.logging)  {
+			/* ask local again for random puzzle*/
+               console.log(">> Cannnot connect to database");
+               console.log(">> loading dummy data");
+  			   if(DEV.logging)  {
 					devTools.prompts.notify({ type:"error", title:"warning", text: "Cannot connect to database"});
 					devTools.prompts.notify({ type:"error", title:"warning", text: "loading dummy data"});
-				}
-				$.protocal.previousData = dummy;
-				try {
-					var j = eval("["+dummy+"]")[0].level;
-				} catch(err) {
-					if(DEBUG)
-						console.log(err);
-					return;
-				}
-				$.phylo.id = j.attributes.id;
-				for(var i =0;i<j.sequence.length;i++) {
-					j.sequence[i] = (j.sequence[i].replace(/-/g,"_")).toUpperCase();
-				}	
-				var numOfSeq = j.sequence.length;
-				var numOfNodes = j.tree.replace(/(\(|\)|\;)/,"").split(",").length;
-				if(numOfSeq != numOfNodes) {
-					console.log(">> Detected Error -> Sequence given ("+numOfSeq+") != phylo tree nodes ("+numOfNodes+")");
-					if(DEV.logging)	
-						devTools.prompts.notify({ type:"error", title:"warning", text: "Puzzle: "+$.phylo.id +"<br> #Seq("+numOfSeq+") / #Nodes("+numOfNodes+") mismatch"});
-				}
-				$.phylo.get = {};
-				$.phylo.get.sequence = j.sequence;
-				
-				if(DEBUG) {
-					j.sequence;
-					j.tree;
-				}
-				$.phylo.get.treeString = j.tree;
-				var tree = $.newick.parse(j.tree); 
-				$.phylo.get.tree = tree;
-				$.main.callBack();
-			    });
-		    },
+			   }
+               $.storage.getLocalPuzzle();
+			});//end failed
+		    },//end request function
 	    };
 
 })();
