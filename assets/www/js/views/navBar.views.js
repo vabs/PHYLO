@@ -28,8 +28,7 @@
 				//request and check if file exists if not load in the file
 				request.getJsonLang(lang, function(json) {
 					//sets the lang defintion
-                    console.log("request"+lang);
-					window.lang = json;
+                  	window.lang = json;
 					//loads out the translation
 					$("#tablet-grid").html(Mustache.render(self.tabletUX,json));
                     $("#tablet-grid-2").hide();

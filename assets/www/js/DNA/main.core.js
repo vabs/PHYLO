@@ -35,8 +35,10 @@
 				$.lang.init(function() {
 					$("#game").show();
 					$.protocal.read(setting);
-					$.protocal.request();
-					//$.endGame.init("lose");
+					$.storage.queryPuzzle();
+                    //$.protocal.request();
+
+                    //$.endGame.init("lose");
 				});
 			},
 			//call back on protocal complete

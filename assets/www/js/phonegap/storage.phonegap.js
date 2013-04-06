@@ -15,6 +15,7 @@
         version :"1.0",
         path:"../www/js/models/puzzles/",
         commandF:"command.json",
+        request: "",/*request for puzzles*/
 
 		init: function(version){
 		   console.log("LOG_storage: initializing ...");
@@ -45,7 +46,9 @@
                if(!this.db){
                     this.db = window.openDatabase(this.dbname, this.version,
                                              this.dbDisplay,  4 * 1024 * 1024);
-               }//test
+               }
+
+
 		   }
 
 		},
@@ -92,19 +95,68 @@
 
         },
 
-        queryPuzzle: function(puzzleOpts){
-            //{level_id:,difficulty:,disease}
+        queryPuzzle: function(){
+            //build both the query and the ajax request
+            var self = $.storage;
+            var type = $.protocal.tp;
+            var score = $.protocal.score;
+            var query = "SELECT * FROM Levels WHERE ";
 
-        /*self.db.transaction(function(tx){
-                             tx.executeSql("SELECT * FROM Levels where level_id=?", [1220],function(tx,results){
-                             var len = results.rows.length;
-                             console.log("Levels table: " + len + " rows found.");
-                             for (var i=0; i<len; i++){
-                                    console.log("Row = " + i + " ID = " + results.rows.item(i).level_id + " Data =  " + results.rows.item(i).level_xml);
-                             }
-                             },self.errorDB);
-                        },self.errorDB);*/
-		},
+            if(type == "random") {
+                self.request+= "mode=1&diff="+score;
+                query+="difficulty=?";
+
+                console.log(query);
+                self.db.transaction(function(tx){
+                    tx.executeSql(query,[score],self.queryRandom,self.errorDB);
+                },self.errorDB);
+
+            } else if(type == "disease") {
+                self.request+= "mode=2&id="+score;
+                query+="level_id=?"
+
+                self.db.transaction(function(tx){
+                    tx.executeSql(query,[score],function(tx,results){
+                        var len = results.rows.length;
+
+                        //$.protocal.request();
+
+                    },self.errorDB);
+                },self.errorDB);
+
+            } else if(type == "level") {
+                self.request+= "mode=2&id="+score;
+                query+="level_id=?"
+
+                self.db.transaction(function(tx){
+                    tx.executeSql(query,[score],function(tx,results){
+                        var len = results.rows.length;
+
+                        //$.protocal.request();
+
+                    },self.errorDB);
+                },self.errorDB);
+
+            }
+        },
+
+        queryRandom:function(tx,results){
+            var len = results.rows.length;
+            if(len>=1){
+                var puzzle = results.rows.item(Math.floor((Math.random()*results.rows.length)));
+                puzzle.json= $.xml2json(puzzle.level_xml);
+                console.log(puzzle.json);
+
+            }else{
+                if($.protocal.checkConnection()){
+                    $.protocal.request();
+                }else{
+                    //pick from local
+                }
+            }
+        },
+
+
         //update file storage of puzzle
 		updatePuzzle:function(){
 		},

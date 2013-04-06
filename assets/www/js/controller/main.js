@@ -55,7 +55,7 @@
 					'DNA/protocal.core','DNA/score.theme','views/customizeGame.actions'],	
 			},
 			'DNA/protocal.core' : {
-				deps : ['jquery','phonegap/cordova-2.5.0'],
+				deps : ['jquery','phonegap/cordova-2.5.0','jquery.xml2json'],
 			},
 			'RNA/stage.ext' : {
 				deps : ['jquery','DNA/stage.core'],
@@ -69,6 +69,9 @@
 			'jquery.dataTables' : {
 				deps : ['jquery','jquery-ui'],
 			},
+            'jquery.xml2json':{
+                deps : ['jquery'],
+            },
 			'bootbox' : {
 				deps : ['jquery','bootstrap'],
 			},
@@ -88,7 +91,7 @@
 				deps : ['jquery'],
 			},
             'phonegap/storage.phonegap':{
-                deps:['jquery','bootstrap','phonegap/cordova-2.5.0']
+                deps:['jquery','bootstrap','jquery.xml2json','DNA/protocal.core','phonegap/cordova-2.5.0']
             },
 			'validation/login.validation' : {
 				deps : ['jquery','phonegap/cordova-2.5.0','DNA/protocal.core'],

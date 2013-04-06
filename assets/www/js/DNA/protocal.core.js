@@ -78,6 +78,7 @@
 		sendHighScore : function() {
 			//this function is currently turned off.
 			return;
+            //save high score on local db
 			var self = this;
 			var data = "mode=4&id="+$.phylo.id+"&user="+window.guest+"&align="+$.board.getJsonAlignments()+"&score="+$.phylo.bestScore;
 			$.ajax({
@@ -119,12 +120,13 @@
 				this.type = $.helper.get("type");
 				this.score = $.helper.get(this.type);
 			} else {
-				//console.log(setting);
+				console.log(setting);
 				var type = setting.type;
 				this.tp = 0;
 				this.score = setting.num;
 				this.tp = type;
-			}
+            }
+
 		},
 		//replay with the previous puzzle
 		replay : function() {
@@ -154,24 +156,8 @@
 			$.phylo.get.tree = tree;
 			$.main.callBack();
 		},
-		//request a new puzzle
-		request : function(setting) {	
-			var str ="";
-			var type = this.tp;
-			var score = this.score;
-	
-			if(type == "random") {
-				str+= "mode=1&diff="+score;
 
-			} else if(type == "disease") {
-				mode = 2;
-				str+= "mode=2&id="+score;
-
-			} else if(type == "level") {
-				mode = 2;
-				str+= "mode=2&id="+score;
-			}
-
+        request : function(str) {
 			$.ajax({
 				url : url,
 				data : str,
