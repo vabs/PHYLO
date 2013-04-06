@@ -3,7 +3,9 @@
  puzzle set db name : phyloPuzzle
  puzzle set db version : 1.0
  $.storage is init at navbar.view.js navbar init
-**/
+ add in_XML field for puzzle db, will insert new puzzle in json format
+
+ **/
 (function() {
     var userCache = window.localStorage;
 
@@ -16,23 +18,24 @@
         path:"../www/js/models/puzzles/",
         commandF:"command.json",
         request: "",/*request for puzzles*/
+        random:false,
 
 		init: function(version){
 		   console.log("LOG_storage: initializing ...");
-		    //create progress loading bar
            var self = $.storage;
+           $.getJSON(self.path+self.commandF)
+           .done(function(data){
+                    self.commands=data;
+           })
+           .fail(function(){
+             console.log("error reading file:"+self.path+self.commandF)
+           });
+
            if(userCache.getItem("puzzleDB_name") === null ){
-                 // show the loading screen
+
+                //create progress loading bar
                  var progressBarHTML=window.lang.body.misc["field 2"]+"<br><div class ='progress progress-striped active'><div class='bar' style='width: 5%'></div></div>";
                  bootbox.dialog(progressBarHTML,[]);
-                 //self.command = $.parseJson();
-
-                 $.getJSON(self.path+self.commandF)
-                 .done(function(data){
-                    self.commands=data;
-                 })
-                 .fail(function(){
-                    console.log("error reading file:"+self.path+self.commandF)});
 
                  //request file access
                  this.version=version;
@@ -61,7 +64,7 @@
         },
 
         errorDB: function(err){
-            console.log("error processing sql");
+            console.log("error processing sql:");
         },
         successPopulateDB: function(){
                     var self = $.storage;
@@ -98,7 +101,7 @@
             var self = $.storage;
             var type = $.protocal.tp;
             var score = $.protocal.score;
-            var query = "SELECT * FROM Levels WHERE ";
+            var query = self.commands.query["select 1"];
 
             if(type == "random") {
                 self.request+= "mode=1&diff="+score;
@@ -131,19 +134,20 @@
                 if(puzzle.in_XML=="true"){
                     puzzle.json= $.xml2json(puzzle.level_xml);
                 }else{
-                    puzzle.json= $.parseJson(puzzle.level_xml);
+                    puzzle.json= $.parseJson(puzzle.level_xml);  //TODO test this
                 }
                     self.processPuzzleJson(puzzle.json);
-
             }else{
-                if($.protocal.checkConnection()!=false){
+                if(!self.random && $.protocal.checkConnection()!=false){
                     if(DEV.logging) {
                         devTools.prompts.notify({title : "LOG_Storage", text :"cannot find in local puzzle,requesting:"+ $.storage.request});
                     }
                     $.protocal.request(self.request);
                 }else{
                     //pick from local
+                    if(self.random=true){console.log("ERROR: cannot find enough samples")}
                     self.getLocalPuzzle();
+                    self.random=true;
                 }
             }
         },
@@ -179,12 +183,13 @@
             $.main.callBack();
         },
 
-        //TODO pick a random local puzzle when both local and request failed --> should probably notify user
+        //pick a random local puzzle when both local and request failed --> should probably notify user
         getLocalPuzzle:function(){
-           /* self.db.transaction(function(tx){
-                tx.executeSql(query,[score],self.queryRandom,self.errorDB);
-            },self.errorDB);
-           */
+           var self= $.storage;
+           var seed = (Math.random() + 1) * 1111111;
+           self.db.transaction(function(tx){
+                tx.executeSql(self.commands.query["select 2"],[seed],self.querySuccess,self.errorDB);
+           },self.errorDB);
         },
 
         //add new json puzzle to storage
