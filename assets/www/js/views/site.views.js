@@ -71,8 +71,6 @@
 				request.getTemplate("templates/play.html",function(context) {
 					request.getJsonLang(lang, function(json) {
 						window.lang = json;
-
-
                         console.log("LOG_site.view: render");
 						$("#mid-panel").html(Mustache.render(context,json));
 						request.complete();
