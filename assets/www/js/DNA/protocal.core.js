@@ -55,7 +55,10 @@
 			}
 			var data = "mode="+mode+"&id="+$.phylo.id+"&user="+window.guest+"&align="+$.board.getJsonAlignments()+"&score="+$.phylo.currentScore;
             if(self.checkConnection()==false){
+                //check local to see if duplicate
                 //TODO save data to local storage if it beat the score
+                var dbData = "()";
+                //check if it is in the local db,get puzzle infor from there
 
                 return;
             }
@@ -66,7 +69,8 @@
 				data : data,
 			}).done(function(re) {
 				var json = eval("["+re+"]")[0];
-				fn(json);
+                //update local db
+                fn(json);
 			}).fail(function() {
 				console.log(">> failed to connect to database to submit end game score");
 				console.log(">> loading end game dummy data");
@@ -164,8 +168,7 @@
 		},
 
         request : function(str,invalidCallback,succCalback,failCallback) {
-
-			$.ajax({
+            $.ajax({
 				url : url,
 				data : str,
 				type : "POST",
@@ -187,6 +190,7 @@
 				}
                 if(succCalback!=null) succCalback();//mostly UI trigger
                 $.storage.updatePuzzle(j)
+                console.log("Protocal.request:");
                 $.storage.processPuzzleJson(j);
 			}).fail(function() {
 			/* ask local again for random puzzle*/

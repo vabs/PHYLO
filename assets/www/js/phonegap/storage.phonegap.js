@@ -11,7 +11,7 @@
 
     //web sql functions
 	$.storage = {
-	    filename: "puzzle1.json",
+	    filename: "puzzle_test.json",
         dbname: "phyloPuzzle_storage",
         dbDisplay: "phyloDB",
         version :"1.0",
@@ -59,8 +59,9 @@
         populateDB: function(tx){
                var self = $.storage;
                tx.executeSql(self.commands.createTable["drop 1"]);
-               //tx.executeSql(self.commands.createTable["drop 2"]);
+               tx.executeSql(self.commands.createTable["drop 2"]);
                tx.executeSql(self.commands.createTable["create 1"]);
+               tx.executeSql(self.commands.createTable["create 2"]);
         },
 
         errorDB: function(err){
@@ -96,6 +97,7 @@
 
         },
 
+        //try to find puzzle in db and if not found what to do
         queryPuzzle: function(){
             //build both the query and the ajax request
             var self = $.storage;
@@ -103,8 +105,10 @@
             var type = $.protocal.tp;
             var score = $.protocal.score;
             var query = self.commands.query["select 1"];
-
+            if(type == "level") return;
             if(type == "random") {
+
+                console.log("type random");
                 self.request+= "mode=1&diff="+score;
                 query+="difficulty=?";
                 self.db.transaction(function(tx){
@@ -113,6 +117,7 @@
 
             //level is already done by check level
             }else if(type == "disease") {
+                console.log("type disease");
                 self.request+= "mode=2&id="+score;
                 query+="level_id=?";
                 self.db.transaction(function(tx){
@@ -121,10 +126,12 @@
             }
         },
 
+        //when you find puzzle in local db
         querySuccess:function(tx,results){
             var self = $.storage;
             var len = results.rows.length;
             var index = ($.protocal.tp=="level_id")?0:Math.floor((Math.random()*results.rows.length));
+            console.log("before deciding"+len+"request"+self.request);
             if(len>=1){
                 var puzzle = results.rows.item(index);
                 if(puzzle.in_XML=="true"){
@@ -132,14 +139,19 @@
                 }else{
                     puzzle.json= $.parseJson(puzzle.level_xml);  //TODO test this
                 }
+                    console.log("querySuccess"+self.request);
                     self.processPuzzleJson(puzzle.json);
+                    return;
             }else{
                 if(!self.random && $.protocal.checkConnection()!=false){
                     if(DEV.logging) {
                         devTools.prompts.notify({title : "LOG_Storage", text :"cannot find in local puzzle,requesting:"+ $.storage.request});
                     }
+                    console.log("by protocal:"+self.request);
                     $.protocal.request(self.request,null,null,self.getLocalPuzzle());
+                    return;
                 }else{
+                    console.log("cannot randomly");
                     //pick from local
                     if(self.random=true){console.log("ERROR: cannot find enough samples")}
                     self.getLocalPuzzle();
@@ -148,10 +160,13 @@
             }
         },
 
-
         //processPuzzleJson from boh request and local
         processPuzzleJson:function(json){
-            $.phylo.id = json.id;
+            if(json.id!=undefined){
+              $.phylo.id = json.id;
+            }else{
+                $.phylo.id =json.attributes.id;
+            }
             for(var i =0;i<json.sequence.length;i++) {
                 json.sequence[i] = (json.sequence[i].replace(/-/g,"_")).toUpperCase();
             }
@@ -160,7 +175,7 @@
             var numOfNodes = json.tree.replace(/(\(|\)|\;)/,"").split(",").length;
 
             if(DEV.logging) {
-                devTools.prompts.notify({ title : "Puzzle Id", text : $.phylo.id});
+                devTools.prompts.notify({ title : "LOG_STORAGE Puzzle Id", text : $.phylo.id});
             }
             if(numOfSeq != numOfNodes) {
                 console.log(">> Detected Error -> Puzzle ("+$.phylo.id+") Sequence given ("+numOfSeq+") != phylo tree nodes ("+numOfNodes+")");
@@ -181,13 +196,13 @@
 
         //pick a random local puzzle when both local and request failed --> should probably notify user
         getLocalPuzzle:function(){
+           console.log("getLocal");
            var self= $.storage;
            var seed = (Math.random() + 1) * 1111111;
            self.db.transaction(function(tx){
                 tx.executeSql(self.commands.query["select 2"],[seed],self.querySuccess,self.errorDB);
            },self.errorDB);
         },
-
 
         //check level exist and start callback
         checkLevel:function(level_id,succCallback,invalidCallback,failCallback){
@@ -207,9 +222,10 @@
                             puzzle.json= $.parseJson(puzzle.level_xml);  //TODO test this
                         }
                         if(succCallback!=null)succCallback();
+                        console.log("checkLevel");
                         self.processPuzzleJson(puzzle.json);
                     }else{
-                        if(!self.random && $.protocal.checkConnection()!=false){
+                        if($.protocal.checkConnection()!=false){
                             if(DEV.logging) {
                                 devTools.prompts.notify({title : "LOG_Storage", text :"cannot find in local puzzle,requesting:"+ $.storage.request});
                             }
@@ -218,12 +234,17 @@
                         }else{
                             if(failCallback!=null)failCallback();
                         }
+                        return;
                     }//end execute sql
                 },self.errorDB);
             },self.errorDB);
         },
 
-        //add new json puzzle to storage
+        //TODO check score of user for that level to see if need to update:
+        checkScore:function(queryParam,callBack){
+
+        },
+        //TODO add new json puzzle to storage
 		updatePuzzle:function(json){
 
 		},

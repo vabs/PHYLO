@@ -34,6 +34,9 @@
 										window.setTimeout(function() { fn() },100);
 									} else {
                                         //TODO WHY HERE?
+                                        if(DEV.logging) {
+                                            devTools.prompts.notify({ title : "site.view Puzzle Id", text : id});
+                                        }
 										$("#draw").hide();
 										$("#menu").hide();
 										$.main.init({
@@ -47,6 +50,10 @@
 								$("#draw").hide();
 								$("#menu").hide();
                                 //TODO WHY HERE?
+
+                                if(DEV.logging) {
+                                    devTools.prompts.notify({ title : "site.view Puzzle Id", text : id});
+                                }
 								$.main.init({
 									type:"disease",
 									num : id,
