@@ -60,6 +60,7 @@
 					if($(this).attr("href") == "javascript:void(0);") {
 						var innerSelf = this;
 						if($.timer.active == true) {
+                            console.log("navBar"+trans.get("quitGame"));
                             bootbox.confirm(Mustache.render(trans.get("quitGame"),json),function(status) {
 								if(status == true) {
 									window.location.hash = "#!/"+lang+"/"+$(innerSelf).attr("id");		

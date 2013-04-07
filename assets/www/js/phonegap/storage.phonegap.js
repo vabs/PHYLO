@@ -21,7 +21,7 @@
         random:false,
 
 		init: function(version){
-		   console.log("LOG_storage: initializing ...");
+		   //console.log("LOG_storage: initializing ...");
            var self = $.storage;
            $.getJSON(self.path+self.commandF)
            .done(function(data){
@@ -45,7 +45,7 @@
 
                this.dbname = userCache.getItem("puzzleDB_name");
                this.version = userCache.getItem("puzzleDB_version")
-               console.log("LOG_storage:opening exisiting db:"+this.dbname+" and version:"+this.version);
+               if(DEV.logging)console.log("LOG_storage:opening exisiting db:"+this.dbname+" and version:"+this.version);
                if(!this.db){
                     this.db = window.openDatabase(this.dbname, this.version,
                                              this.dbDisplay,  4 * 1024 * 1024);
@@ -108,7 +108,6 @@
             if(type == "level") return;
             if(type == "random") {
 
-                console.log("type random");
                 self.request+= "mode=1&diff="+score;
                 query+="difficulty=?";
                 self.db.transaction(function(tx){
@@ -117,7 +116,6 @@
 
             //level is already done by check level
             }else if(type == "disease") {
-                console.log("type disease");
                 self.request+= "mode=2&id="+score;
                 query+="level_id=?";
                 self.db.transaction(function(tx){
@@ -131,7 +129,6 @@
             var self = $.storage;
             var len = results.rows.length;
             var index = ($.protocal.tp=="level_id")?0:Math.floor((Math.random()*results.rows.length));
-            console.log("before deciding"+len+"request"+self.request);
             if(len>=1){
                 var puzzle = results.rows.item(index);
                 if(puzzle.in_XML=="true"){
@@ -139,7 +136,7 @@
                 }else{
                     puzzle.json= $.parseJson(puzzle.level_xml);  //TODO test this
                 }
-                    console.log("querySuccess"+self.request);
+                    //console.log("querySuccess"+self.request);
                     self.processPuzzleJson(puzzle.json);
                     return;
             }else{
@@ -147,11 +144,10 @@
                     if(DEV.logging) {
                         devTools.prompts.notify({title : "LOG_Storage", text :"cannot find in local puzzle,requesting:"+ $.storage.request});
                     }
-                    console.log("by protocal:"+self.request);
-                    $.protocal.request(self.request,null,null,self.getLocalPuzzle());
+                    $.protocal.request(self.request,null,null,null);//self.getLocalPuzzle());
                     return;
                 }else{
-                    console.log("cannot randomly");
+                    if(DEV.logging) console.log("cannot randomly");
                     //pick from local
                     if(self.random=true){console.log("ERROR: cannot find enough samples")}
                     self.getLocalPuzzle();
@@ -196,7 +192,6 @@
 
         //pick a random local puzzle when both local and request failed --> should probably notify user
         getLocalPuzzle:function(){
-           console.log("getLocal");
            var self= $.storage;
            var seed = (Math.random() + 1) * 1111111;
            self.db.transaction(function(tx){
@@ -206,11 +201,10 @@
 
         //check level exist and start callback
         checkLevel:function(level_id,succCallback,invalidCallback,failCallback){
-            console.log("level_select");
             var self = $.storage;
             self.request="mode=2&id="+level_id;
             var query = self.commands.query["select 1"]+"level_id=?";
-            console.log("checkLevel:"+query+" id:"+level_id);
+            if(DEV.logging)console.log("checkLevel:"+query+" id:"+level_id);
             self.db.transaction(function(tx){
                 tx.executeSql(query,[level_id],function(tx,results){
                     var len = results.rows.length;
@@ -222,7 +216,6 @@
                             puzzle.json= $.parseJson(puzzle.level_xml);  //TODO test this
                         }
                         if(succCallback!=null)succCallback();
-                        console.log("checkLevel");
                         self.processPuzzleJson(puzzle.json);
                     }else{
                         if($.protocal.checkConnection()!=false){

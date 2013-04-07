@@ -188,7 +188,9 @@
 						console.log(err);
 					return;
 				}
-                if(succCalback!=null) succCalback();//mostly UI trigger
+                if(succCalback!=null){
+                    succCalback();
+                }//mostly UI trigger
                 $.storage.updatePuzzle(j)
                 console.log("Protocal.request:");
                 $.storage.processPuzzleJson(j);
@@ -201,10 +203,11 @@
 					devTools.prompts.notify({ type:"error", title:"warning", text: "loading dummy data"});
 			   }
                if(failCallback!=null){
+                    console.log("fail");
                     failCallback();
                }
 			});//end failed
-		    },//end request function
+		  },//end request function
 	    };
 
 })();
