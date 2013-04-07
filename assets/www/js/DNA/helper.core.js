@@ -45,14 +45,16 @@
 					}
 				}
 		},
-		//alert box plugin
+		//alert box plugin --> slowly deprecated to replaced by bootbox
 		popUp : function(msg,ans,op) {
-			if(op != undefined) {
+
+            if(op != undefined) {
 				if(op.cancel != undefined && op.cancel == false)
 					$(".warning-cancel").hide();
 			} else {
 				$(".warning-cancel").show();
 			}
+
 			$(".warning-bg").css({
 				height: $(document).height(),
 				width: $(document).width(),

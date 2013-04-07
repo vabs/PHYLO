@@ -48,11 +48,18 @@
 		},
 		//sends end game score
 		sendEndGameScore : function(status,fn) {
-			var mode = 3;
+			var self= $.protocal;
+            var mode = 3;
 			if(status == "completed") {
 				mode = 4;
 			}
 			var data = "mode="+mode+"&id="+$.phylo.id+"&user="+window.guest+"&align="+$.board.getJsonAlignments()+"&score="+$.phylo.currentScore;
+            if(self.checkConnection()==false){
+                //TODO save data to local storage if it beat the score
+
+                return;
+            }
+
             $.ajax({
 				type: "POST",
 				url : url,
@@ -156,7 +163,7 @@
 			$.main.callBack();
 		},
 
-        request : function(str,invalidCallback,failCallback) {
+        request : function(str,invalidCallback,succCalback,failCallback) {
 
 			$.ajax({
 				url : url,
@@ -178,7 +185,7 @@
 						console.log(err);
 					return;
 				}
-                //
+                if(succCalback!=null) succCalback();//mostly UI trigger
                 $.storage.updatePuzzle(j)
                 $.storage.processPuzzleJson(j);
 			}).fail(function() {

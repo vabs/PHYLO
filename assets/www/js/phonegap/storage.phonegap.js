@@ -138,7 +138,7 @@
                     if(DEV.logging) {
                         devTools.prompts.notify({title : "LOG_Storage", text :"cannot find in local puzzle,requesting:"+ $.storage.request});
                     }
-                    $.protocal.request(self.request,null,self.getLocalPuzzle());
+                    $.protocal.request(self.request,null,null,self.getLocalPuzzle());
                 }else{
                     //pick from local
                     if(self.random=true){console.log("ERROR: cannot find enough samples")}
@@ -213,7 +213,8 @@
                             if(DEV.logging) {
                                 devTools.prompts.notify({title : "LOG_Storage", text :"cannot find in local puzzle,requesting:"+ $.storage.request});
                             }
-                            $.protocal.request(self.request,invalidCallback,failCallback);
+                            //TODO need to test this by not importing all the puzzle
+                            $.protocal.request(self.request,invalidCallback,succCallback,failCallback);
                         }else{
                             if(failCallback!=null)failCallback();
                         }

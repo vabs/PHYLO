@@ -381,11 +381,8 @@
 						220 < eY && eY < 270 ){
 						var id = parseInt($("#level_inputbox").val().trim());
 						if(isNaN(id)) {
-							$.helper.popUp("Numbers Only!", function(status) {
-								
-							}, {
-								cancel : false,
-							});
+                            //TODO add in translation
+                            bootbox.alert("Numbers Only");
 							return;
 						}
                         $.storage.checkLevel(id,function(){
@@ -400,19 +397,13 @@
                             });
                             return;
                         },function(){
-                            //invalid
-                                $.helper.popUp("Invalid level!", function(status) {
-                                }, {
-                                    cancel : false,
-                                });
+                            //invalid  TODO, add in translation
+                                bootbox.alert("Invalid Level");
                             return;
                         },
                         function(){
-                           //failure
-                           $.helper.popUp("Cannot retrieve level due to Internet disconnection", function(status) {
-                           }, {
-                                cancel : false,
-                           });
+                           //failure TODO add in translation
+                            bootbox.alert("Cannot retrieve level due to Internet disconnection");
                         });
 					}	
 				};
