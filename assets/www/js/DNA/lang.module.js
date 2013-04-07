@@ -1,6 +1,5 @@
 (function() {
-	$.lang = {
-
+	$.langModule = {
         //initliaze and get the langauges file, then executes call back function
         init : function(callBack) {
             //checks if language file is already loaded.
@@ -16,9 +15,9 @@
             if($("#langFile").length == 0) {
                 var script = document.createElement("script");
                 script.id = "langFile";
-                script.src = "../lang/"+hash+".js";
+                script.src = "../www/lang/"+hash+".js";
                 script.type = "text/javascript";
-
+                //console.log("source to load"+script.src);
                 document.getElementsByTagName("head")[0].appendChild(script);
 
                 script.onload = function() {
