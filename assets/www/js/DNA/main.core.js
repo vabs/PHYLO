@@ -36,7 +36,6 @@
 					$("#game").show();
 					$.protocal.read(setting);
 					$.storage.queryPuzzle();
-                    //$.protocal.request();
 
                     //$.endGame.init("lose");
 				});
@@ -122,5 +121,5 @@
 			},
 		};
 
-	//	$.main.init();
+
 })();

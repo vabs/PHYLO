@@ -292,7 +292,7 @@
 						switch(i) {
 							case 1:
 								ctx.beginPath();
-								ctx.clearRect(0,0,1024,450);
+                                ctx.clearRect(0, 0,1024,450);
 								ctx.closePath();
 								selection = [];
 								ctx.beginPath();
@@ -388,41 +388,32 @@
 							});
 							return;
 						}
-						$.ajax({
-							url : "../phpdb/phyloExpertDB.php", 
-							data : "mode=2&id="+id,
-							type : "POST",
-						}).done(function(data) {
-							if(data == "" ) {
-								//$.invalid.level();
-								$.helper.popUp("Invalid level!", function(status) {
-									
-								}, {
-									cancel : false,
-								});
-								
-							} else {
-								$("#draw").hide();
-								$("#menu").hide();
-								$("#level_inputbox").hide();
-								$("#level_inputbox").val("");
-								$.main.init({
-									type: "disease",
-									num: id,		
-								});	
-							}
-							return;
-						}).fail(function(data) {
-								$("#draw").hide();
-								$("#menu").hide();
-								$("#level_inputbox").hide();
-								$("#level_inputbox").val("");
-								$.main.init({
-									type: "disease",
-									num: id,		
-								});	
-
-						});
+                        $.storage.checkLevel(id,function(){
+                            //success
+                            $("#draw").hide();
+                            $("#menu").hide();
+                            $("#level_inputbox").hide();
+                            $("#level_inputbox").val("");
+                                $.main.init({
+                                type: "level",
+                                num: id,
+                            });
+                            return;
+                        },function(){
+                            //invalid
+                                $.helper.popUp("Invalid level!", function(status) {
+                                }, {
+                                    cancel : false,
+                                });
+                            return;
+                        },
+                        function(){
+                           //failure
+                           $.helper.popUp("Cannot retrieve level due to Internet disconnection", function(status) {
+                           }, {
+                                cancel : false,
+                           });
+                        });
 					}	
 				};
 				this.onOver = function(eX,eY) {

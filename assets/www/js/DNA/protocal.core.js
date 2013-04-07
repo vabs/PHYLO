@@ -120,7 +120,6 @@
 				this.type = $.helper.get("type");
 				this.score = $.helper.get(this.type);
 			} else {
-				console.log(setting);
 				var type = setting.type;
 				this.tp = 0;
 				this.score = setting.num;
@@ -157,7 +156,7 @@
 			$.main.callBack();
 		},
 
-        request : function(str) {
+        request : function(str,invalidCallback,failCallback) {
 
 			$.ajax({
 				url : url,
@@ -166,7 +165,11 @@
 			}).done(function(data) {
 				data = data.replace("@","");
 				$.protocal.previousData = data;
-				if(DEBUG ^ DEV.logging)
+                if (data == ""){
+                    if(invalidCallback!=null)invalidCallback();
+                    return;
+                }
+                if(DEBUG ^ DEV.logging)
 					console.log(data);
 				try {
 					var j = eval("["+data+"]")[0].level;
@@ -186,7 +189,9 @@
 					devTools.prompts.notify({ type:"error", title:"warning", text: "Cannot connect to database"});
 					devTools.prompts.notify({ type:"error", title:"warning", text: "loading dummy data"});
 			   }
-               $.storage.getLocalPuzzle();
+               if(failCallback!=null){
+                    failCallback();
+               }
 			});//end failed
 		    },//end request function
 	    };

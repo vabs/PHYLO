@@ -64,7 +64,7 @@
         },
 
         errorDB: function(err){
-            console.log("error processing sql:");
+            console.log("error processing sql or callback error");
         },
         successPopulateDB: function(){
                     var self = $.storage;
@@ -99,6 +99,7 @@
         queryPuzzle: function(){
             //build both the query and the ajax request
             var self = $.storage;
+            self.request="";
             var type = $.protocal.tp;
             var score = $.protocal.score;
             var query = self.commands.query["select 1"];
@@ -110,18 +111,13 @@
                     tx.executeSql(query,[score],self.querySuccess,self.errorDB);
                 },self.errorDB);
 
-
-            } else if(type == "level") {
-                console.log("received request");
+            //level is already done by check level
+            }else if(type == "disease") {
                 self.request+= "mode=2&id="+score;
-                query+="level_id=?"
+                query+="level_id=?";
                 self.db.transaction(function(tx){
                     tx.executeSql(query,[score],self.querySuccess,self.errorDB);
                 },self.errorDB);
-
-            } else if(type == "disease") {
-                self.request+= "mode=2&id="+score;
-                //query different....TODO
             }
         },
 
@@ -142,7 +138,7 @@
                     if(DEV.logging) {
                         devTools.prompts.notify({title : "LOG_Storage", text :"cannot find in local puzzle,requesting:"+ $.storage.request});
                     }
-                    $.protocal.request(self.request);
+                    $.protocal.request(self.request,null,self.getLocalPuzzle());
                 }else{
                     //pick from local
                     if(self.random=true){console.log("ERROR: cannot find enough samples")}
@@ -190,6 +186,40 @@
            self.db.transaction(function(tx){
                 tx.executeSql(self.commands.query["select 2"],[seed],self.querySuccess,self.errorDB);
            },self.errorDB);
+        },
+
+
+        //check level exist and start callback
+        checkLevel:function(level_id,succCallback,invalidCallback,failCallback){
+            console.log("level_select");
+            var self = $.storage;
+            self.request="mode=2&id="+level_id;
+            var query = self.commands.query["select 1"]+"level_id=?";
+            console.log("checkLevel:"+query+" id:"+level_id);
+            self.db.transaction(function(tx){
+                tx.executeSql(query,[level_id],function(tx,results){
+                    var len = results.rows.length;
+                    if(len>=1){
+                        var puzzle = results.rows.item(0);
+                        if(puzzle.in_XML=="true"){
+                            puzzle.json= $.xml2json(puzzle.level_xml);
+                        }else{
+                            puzzle.json= $.parseJson(puzzle.level_xml);  //TODO test this
+                        }
+                        if(succCallback!=null)succCallback();
+                        self.processPuzzleJson(puzzle.json);
+                    }else{
+                        if(!self.random && $.protocal.checkConnection()!=false){
+                            if(DEV.logging) {
+                                devTools.prompts.notify({title : "LOG_Storage", text :"cannot find in local puzzle,requesting:"+ $.storage.request});
+                            }
+                            $.protocal.request(self.request,invalidCallback,failCallback);
+                        }else{
+                            if(failCallback!=null)failCallback();
+                        }
+                    }//end execute sql
+                },self.errorDB);
+            },self.errorDB);
         },
 
         //add new json puzzle to storage

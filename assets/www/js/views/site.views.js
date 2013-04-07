@@ -33,6 +33,7 @@
 									if($.main == undefined) { 
 										window.setTimeout(function() { fn() },100);
 									} else {
+                                        //TODO WHY HERE?
 										$("#draw").hide();
 										$("#menu").hide();
 										$.main.init({
@@ -45,6 +46,7 @@
 							} else {
 								$("#draw").hide();
 								$("#menu").hide();
+                                //TODO WHY HERE?
 								$.main.init({
 									type:"disease",
 									num : id,
