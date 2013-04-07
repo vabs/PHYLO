@@ -2,10 +2,10 @@
 	$(document).ready(function() {
 		//hide logout on default
         $("#logout").hide();
-        document.addEventListener("deviceready", onDeviceReady,false);
+        document.addEventListener("deviceready", onDeviceReady_login,false);
     });
 
-    function onDeviceReady(){
+    function onDeviceReady_login(){
         var userCache = window.localStorage;
 
         /*-----------------------------------HybridAuth Functions-------------------------*/
@@ -257,12 +257,14 @@
                              if(newloc.indexOf(redirect_url) == 0)
                              {
                                     popup.close();
-                                    if(window && window.hasOwnProperty("location")){
-                                        //create cookie to jump start the login process after page refresh
-                                        window.sessionStorage.setItem("HybridAuthFirst","true");
-                                        userCache.setItem("provider",provider);
-                                        window.location.reload();
-                                    }
+                                    //create cookie to jump start the login process after page refresh
+                                    window.sessionStorage.setItem("HybridAuthFirst","true");
+                                    userCache.setItem("provider",provider);
+
+                                    $("#tablet-login-box").hide();
+                                    $("#tablet-login-box-bg").hide();
+                                    onDeviceReady_login();
+
                              }
         };
 
@@ -273,6 +275,7 @@
                hybridAuthSecond(userCache.getItem("provider"),true);
                window.sessionStorage.removeItem("HybridAuthFirst");
                loginSuccessUI(userCache.getItem("username"));
+
         }else{
 
            console.log("restart app");

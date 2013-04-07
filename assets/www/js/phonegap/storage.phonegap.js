@@ -8,10 +8,10 @@
  **/
 (function() {
     var userCache = window.localStorage;
-
+    var DEV = window.DEV;
     //web sql functions
 	$.storage = {
-	    filename: "puzzle_test.json",
+	    filename: "puzzle1.json",
         dbname: "phyloPuzzle_storage",
         dbDisplay: "phyloDB",
         version :"1.0",
@@ -36,12 +36,13 @@
                 //create progress loading bar
                  var progressBarHTML=window.lang.body.misc["field 2"]+"<br><div class ='progress progress-striped active'><div class='bar' style='width: 5%'></div></div>";
                  bootbox.dialog(progressBarHTML,[]);
-
-                 //request file access
+                 if(DEV.logging)console.log("open new database");
+               //request file access
                  this.version=version;
                  this.db = window.openDatabase(this.dbname,this.version,this.dbDisplay,  4 * 1024 * 1024);
                  this.db.transaction(this.populateDB,this.errorDB,this.successPopulateDB);
             }else{
+
 
                this.dbname = userCache.getItem("puzzleDB_name");
                this.version = userCache.getItem("puzzleDB_version")
@@ -64,8 +65,8 @@
                tx.executeSql(self.commands.createTable["create 2"]);
         },
 
-        errorDB: function(err){
-            console.log("error processing sql or callback error");
+        errorDB: function(tx,err){
+            console.log("error processing sql or callback error "+err.message);
         },
         successPopulateDB: function(){
                     var self = $.storage;
