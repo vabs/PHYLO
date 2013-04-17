@@ -59,7 +59,7 @@
             userCache.setItem("logid", logid);
             userCache.setItem("username", username);
 
-            //TODO connection check
+            //connection check --handled by ajax failed function
             //get password from phylo db 
             $.ajax({
               type: 'POST',
@@ -68,7 +68,7 @@
               success: function(mypasswd) {
 
                 var password = mypasswd;
-                //TODO: connection check
+                //connection check--> handle by ajax failed
                 $.protocal.login(username, password, function(re) {
                   if (re != "succ") {
                     if ((username == "" || password == "") || email == "") {
@@ -100,8 +100,7 @@
                         bootbox.confirm(window.lang.body.social["field 2"], window.lang.body.social["field 26"], window.lang.body.social["field 25"], function(result) {
                           if (result) {
                             console.log("post on " + provider + " : " + data);
-                            //ajax to phylo hybridauth php TODO: what does this do?
-                            //TODO check connection
+                            //check connection --> handle by ajax failed
                             $.ajax({
                               type: "POST",
                               url: "http://phylo.cs.mcgill.ca/phpdb/hybridauth/signin/feed.php",
@@ -124,7 +123,7 @@
                     }); //end registering user from social network into phylo database + callback
                   } //end not successful login
                 }); //end protocal.login
-              }, //end ajax request to phylo + done success callback TODO, should really change "done" "fail" to success and error
+              }, //end ajax request to phylo + done success callback
               error: function() {
                 console.log("error function at 1st ajax hybridauth");
                 $("div.login-warning").show().html(window.lang.body.play.gameselect.login["field 21"]);
@@ -204,7 +203,7 @@
       $("#tablet-login-box-bg").hide();
       $(".login-btn").unbind("click");
       // show buttons. NB: hide expert button if necessary
-      //TODO connection checking
+      //connection checking--> handle by ajax failed
       $.ajax({
         type: "POST",
         url: "http://phylo.cs.mcgill.ca/phpdb/phyloExpertDB.php",
@@ -325,7 +324,7 @@
 
     //register event
     $(".register-btn").click(function() {
-      //TODO: doc missing, only after enter email, will the cancel button's display==block
+      //cancel button only show after user enter email
       if ($(".cancel-btn").css("display") == "none") {
         $(".login-warning").hide();
         $(".email-holder").show();

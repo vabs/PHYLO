@@ -11,15 +11,14 @@
   var DEV = window.DEV;
   //web sql functions
   $.storage = {
-    filename: "puzzle1.json",
+    filename: "puzzle_test.json",
     dbname: "phyloPuzzle_storage",
     dbDisplay: "phyloDB",
     version: "1.0",
     path: "../www/js/models/puzzles/",
     commandF: "command.json",
     request: "",
-    /*request for puzzles*/
-    random: false,
+    uploadCount:0,
 
     init: function(version) {
       //console.log("LOG_storage: initializing ...");
@@ -55,7 +54,9 @@
 
 
       }
-
+      if($.protocal.checkConnection()!=false){
+        self.uploadSolutions();
+      }
     },
 
     populateDB: function(tx) {
@@ -138,13 +139,13 @@
         if (puzzle.in_XML == "true") {
           puzzle.json = $.xml2json(puzzle.level_xml);
         } else {
-          puzzle.json = $.parseJson(puzzle.level_xml); //TODO test this
+          puzzle.json = $.parseJSON(puzzle.level_xml);
         }
         //console.log("querySuccess"+self.request);
         self.processPuzzleJson(puzzle.json);
         return;
       } else {
-        if (!self.random && $.protocal.checkConnection() != false) {
+        if ($.protocal.checkConnection() != false) {
           if (DEV.logging) {
             devTools.prompts.notify({
               title: "LOG_Storage",
@@ -154,19 +155,17 @@
           $.protocal.request(self.request, null, null, null); //self.getLocalPuzzle());
           return;
         } else {
-          if (DEV.logging) console.log("cannot randomly");
+          bootbox.alert("Cannot retrieve puzzle due to Internet disconnection. Randomly select puzzle.");
+          if (DEV.logging) console.log("cannot connect to internet, randomly pick from  local");
           //pick from local
-          if (self.random = true) {
-            console.log("ERROR: cannot find enough samples")
-          }
           self.getLocalPuzzle();
-          self.random = true;
         }
       }
     },
 
     //processPuzzleJson from boh request and local
     processPuzzleJson: function(json) {
+
       if (json.id != undefined) {
         $.phylo.id = json.id;
       } else {
@@ -228,7 +227,7 @@
             if (puzzle.in_XML == "true") {
               puzzle.json = $.xml2json(puzzle.level_xml);
             } else {
-              puzzle.json = $.parseJson(puzzle.level_xml); //TODO test this
+              puzzle.json = $.parseJSON(puzzle.level_xml);
             }
             if (succCallback != null) succCallback();
             self.processPuzzleJson(puzzle.json);
@@ -240,7 +239,7 @@
                   text: "cannot find in local puzzle,requesting:" + $.storage.request
                 });
               }
-              //TODO need to test this by not importing all the puzzle
+
               $.protocal.request(self.request, invalidCallback, succCallback, failCallback);
             } else {
               if (failCallback != null) failCallback();
@@ -251,7 +250,6 @@
       }, self.errorDB);
     },
 
-    //TODO check score of user for that level to see if need to update:
     checkScore: function(queryParam, dbd) {
       var self = $.storage;
       var dbdata = "( "+dbd[0]+",'"+dbd[1]+"', '"+dbd[2]+"',"+dbd[3]+","+dbd[4]+")";
@@ -317,32 +315,49 @@
                     var len = results.rows.length;
                     if(len>=1){
                         var puzzle = results.rows.item(0);
-                        //var dummy = '{"0":"CONGENITAL PTOSIS","disease_link":"CONGENITAL PTOSIS","1":"67","play_count":"67","2":"13","fail_count":"13","3":"42","best_score":"42","4":"1375","running_score":"1375","5":"unki2aut","highscore_user":"unki2aut"}';
                         callback(puzzle);
                     }else{
                         console.log("puzzle information not found-> should update");
                         //TODO: callback without any puzzle info
+                        bootbox.alert("Unable to retrieve puzzle information due to Internet disconnection.You puzzle will be saved locally");
+                        var dummy = '{"0":"CONGENITAL PTOSIS","disease_link":"CONGENITAL PTOSIS","1":"67","play_count":"67","2":"13","fail_count":"13","3":"42","best_score":"42","4":"1375","running_score":"1375","5":"unki2aut","highscore_user":"unki2aut"}';
+                        callback(dummy);
                     }
                 },
             self.errorDB);
         },self.errorDB);
     },
-    //TODO add new json puzzle to storage
+    //add new json puzzle to storage
     updatePuzzle: function(json) {
-
+       var self = $.storage;
+       self.db.transaction(function(tx){
+            tx.executeSql(self.commands.createTable["insert 3"],
+            [parseInt(json.attributes.id),JSON.stringify(json),false],function(tx,results){
+                    if (DEV.logging)  devTools.prompts.notify({ type:"success", title:"import new puzzle", text: "new puzzle imported:"+json.attributes.id});
+                },self.errorDB);
+        },self.errorDB);
     },
     updatePuzzleInfo:function(json){
-         console.log("updatePuzzleInfo"+json);
-        //TODO
+         console.log("updatePuzzleInfo"+JSON.stringify(json));
+         var self = $.storage;
+         self.db.transaction(function(tx){
+             tx.executeSql(self.commands.query["update 3"],
+                [json.disease_link,json.play_count,json.fail_count,
+                    json.best_score,json.running_score,json.highscore_user,$.phylo.id],function(tx,results){
+                    if (DEV.logging)  devTools.prompts.notify({ type:"success", title:"update puzzle stat", text: "update state of puzzle:"+ $.phylo.id});
+                },self.errorDB);
+         },self.errorDB);
+
     },
+
+    //upload puzzle that is already solved.
     uploadSolutions:function(){
-        console.log("upload solution");
-        //search for local uploaded
         var self = $.storage;
         var query =self.commands.query["select 3"];
         self.db.transaction(function(tx){
             tx.executeSql(query,["FALSE"],function(tx,results){
                     var len = results.rows.length;
+                    self.uploadCount=len;
                     var i =0;
                     while(i<len){
                         var entry = results.rows.item(i);
@@ -354,7 +369,11 @@
                             data : data
                         }).done(function(re){
                              //delete
-                             console.log("delete transaction");
+                             self.uploadCount--;
+                             if(self.uploadCount<=0){
+                                 bootbox.alert("Thank you for uploading your saved puzzle to Phylo");
+                                 self.uploadCount=0;
+                             }
                              var query = self.commands.query["delete 1"];
                              self.db.transaction(function(tx){
                                     tx.executeSql(query,[entry.level_id,entry.player_id],
@@ -362,9 +381,9 @@
                              },self.errorDB);
 
                         }).fail(function(re){
+                            self.uploadCount--;
                             //nothing modify
                         });
-
                         i++;
                     }//end while
                 },
