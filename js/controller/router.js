@@ -13,7 +13,8 @@
 				'!/contribute' : "contribute",
 				"!/:lang/BETA/RNA" : "rna",
 				"!/:lang/play/puzzle/:id" : "puzzle",
-				"!/:lang/play/aws/:id" : "mechanicalTurk",
+				"!/:lang/play/aws/:id": "mechanicalTurk",
+				"!/:lang/aws/tutorial" : "mTurktutorial",
 				"!/:lang/play" : "play",
 				"!/:lang/play/:AMA": "play",
 				"!/play" : "play",
@@ -74,16 +75,18 @@
 
 			route.on('route:mechanicalTurk', function(lang, id) {
 				//you can write additional script here
-				
+				// this is when the request is sent from MTurk
 				id = id.replace(/\?.*/,"");
 				console.log(id);
 				console.log("calling aws link");
+
 				if(lang == undefined) {
 					lang = "EN";
 				} else lang.toUpperCase();
 				navBar.set(lang, "play");
 				var playView = new Views.Play;
-				playView.renderPuzzle(lang, id);	
+				playView.renderPuzzle(lang, id);
+				$("div#top-panel").css("display", "none");
 			});
 		
 			route.on('route:rna',function(lang) {
@@ -93,6 +96,22 @@
 				navBar.set(lang, "play");
 				var rnaView = new Views.RNA;
 				rnaView.render(lang);
+			});
+
+			route.on('route:mTurktutorial', function (lang) {
+                // Tutorial link for request from MTurk
+			    if (lang == undefined) {
+			        lang = "EN";
+			    } else lang.toUpperCase();
+			    navBar.set(lang, "tutorial");
+			    var tutorialModel = new Models.Tutorial({ lang: lang });
+			    var tutorialView = new Views.Tutorial;
+			    tutorialModel.fetch({
+			        success: function () {
+			            tutorialView.render(tutorialModel.get("data"));
+			        }
+			    });
+			    $("div#top-panel").css("display", "none");
 			});
 
 			route.on('route:tutorial', function(lang) {

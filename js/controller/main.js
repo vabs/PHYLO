@@ -163,8 +163,8 @@
 		'backbone/backbone',
 		'mustache/mustache',
 		'controller/router'
-	],function($, _, Backbone, Mustache, Router) {
-		Router.init();
+	], function ($, _, Backbone, Mustache, Router) {
+	    Router.init();
 	});
 
 	require(['jquery/jquery.notify']);
